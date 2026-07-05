@@ -3,6 +3,7 @@ import { logoutUser } from "../services/authService";
 import { loadCart } from "../services/cartService";
 import { useNavigate } from "react-router-dom";
 import { addFavoriteItem, loadFavorites, removeFavoriteItem,} from "../services/favoriteService";
+import toast from "react-hot-toast";
 
 export const GlobalStateContext = createContext();
 
@@ -174,7 +175,7 @@ const addFavorite = async (recipe) => {
 
     if (!user) {
 
-        alert("Please login first");
+        toast.error("Please login first");
 
         return;
 

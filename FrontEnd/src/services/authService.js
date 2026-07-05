@@ -5,12 +5,11 @@ import {
   signOut
 } from "firebase/auth";
 
-import {
-  doc,
-  setDoc
-} from "firebase/firestore";
+import {doc, setDoc } from "firebase/firestore";
 
 import { auth, db } from "../firebase";
+
+import { serverTimestamp } from "firebase/firestore";
 
 export const signupUser = async (
   name,
@@ -42,7 +41,7 @@ export const signupUser = async (
       uid: userCredential.user.uid,
       name,
       email,
-      createdAt: new Date(),
+      createdAt: serverTimestamp(),
     }
   );
 

@@ -6,6 +6,7 @@ import { getRecipes } from "../recipeApi";
 import { GlobalStateContext } from "../context/GlobalStateContext";
 import RecipeModal from "./RecipeModal";
 import { handleAddToCart } from "../utils/handleAddToCart";
+import toast from "react-hot-toast";
 
 const ItemsPage = () => {
 
@@ -113,7 +114,7 @@ const ItemsPage = () => {
 
         if (success) {
 
-            alert(`${item.name} added to cart`);
+            toast.success(`${item.name} added to cart`);
 
         }
 

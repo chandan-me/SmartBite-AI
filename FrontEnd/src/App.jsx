@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import VoiceAssistant from './components/VoiceAssistant'
 import Footer from './components/Footer'
 import { useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(
@@ -25,7 +26,12 @@ const App = () => {
       <Outlet />
       <VoiceAssistant />
       <Footer />
+          <Toaster position="top-right" reverseOrder={false}/>
+
     </GlobalStateProvider>
+    
+
+    
     
   )
 }

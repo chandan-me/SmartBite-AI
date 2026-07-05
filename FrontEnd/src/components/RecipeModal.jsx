@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import "./CSS/RecipeModal.css";
 import { GlobalStateContext } from "../context/GlobalStateContext";
 import { handleAddToCart } from "../utils/handleAddToCart";
+import toast from "react-hot-toast";
 
 const RecipeModal = ({ recipe, closeModal }) => {
 
@@ -51,7 +52,7 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
         if (success) {
 
-            alert("✅ Added to Cart");
+            toast.success("✅ Added to Cart");
 
             closeModal();
 

@@ -1,84 +1,1069 @@
-/* ═══════════════════ ORDERS ═══════════════════ */
-.orders-page {
-  max-width: 900px; margin: 0 auto;
-  padding: calc(var(--navbar-height) + 2rem) 2rem 3rem;
-  min-height: 100vh;
+.orders-container{
+    width:min(1200px,95%);
+    margin:0 auto;
+    padding:calc(var(--navbar-height) + 30px) 0 80px;
+    min-height:100vh;
 }
-.orders-page h1 {
-  font-family: var(--font-display); font-size: 2rem; font-weight: 800;
-  margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;
-}
-.orders-page h1::before { content: '📦'; }
 
-.order-card {
-  background: var(--bg-card);
-  border: 10px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 1.5rem;
-  margin-top: 3rem;
-  margin-bottom: 1rem;
-  transition: var(--transition);
+.orders-title{
+    font-size:2.3rem;
+    font-weight:800;
+    color:var(--text-primary);
+    margin-bottom:35px;
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
-.order-card:hover { border-color: var(--border-orange); }
 
-.order-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 2rem; flex-wrap: wrap; gap: 0.5rem;
+.orders-loading{
+    padding:120px;
+    text-align:center;
+    font-size:22px;
+    color:var(--orange-primary);
 }
-.order-id { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; }
-.order-date { color: var(--text-muted); font-size: 0.82rem; }
 
-.order-status {
-  font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+.orders-list{
+    display:flex;
+    flex-direction:column;
+    gap:35px;
 }
-.order-status.delivered { background: rgba(56,161,105,0.15); color: #68d391; border: 1px solid rgba(56,161,105,0.3); }
-.order-status.pending { background: rgba(255,107,0,0.15); color: var(--orange-primary); border: 1px solid var(--border-orange); }
-.order-status.processing { background: rgba(66,153,225,0.15); color: #63b3ed; border: 1px solid rgba(66,153,225,0.3); }
 
-.order-items-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
-.order-item-row {
-  display: flex; align-items: center; gap: 1rem;
-  padding: 0.5rem; border-radius: var(--radius-sm);
-  background: var(--bg-elevated);
+/* ======================================
+            ORDER CARD
+====================================== */
+
+.order-card{
+
+    background:var(--bg-card);
+
+    border:1px solid var(--border-subtle);
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    transition:.35s;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+
 }
-.order-item-row img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
-.order-item-row .item-info { flex: 1; }
-.order-item-row .item-name { font-weight: 600; font-size: 0.88rem; }
-.order-item-row .item-qty { color: var(--text-muted); font-size: 0.78rem; }
-.order-item-row .item-price { color: var(--orange-primary); font-weight: 700; }
 
-.order-total {
-  display: flex; align-items: center; justify-content: space-between;
-  border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;
-  font-size: 0.9rem;
+.order-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:var(--orange-primary);
+
+    box-shadow:0 20px 55px rgba(255,140,0,.18);
+
 }
-.order-total .total-amount { font-family: var(--font-display); font-weight: 800; color: var(--orange-primary); }
 
-.orders-empty {
-  text-align: center; padding: 4rem 2rem;
-  background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl);
+/* ======================================
+            HEADER
+====================================== */
+
+.order-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px 30px;
+
+    background:linear-gradient(
+        135deg,
+        rgba(255,140,0,.08),
+        rgba(255,100,0,.04)
+    );
+
+    border-bottom:1px solid var(--border-subtle);
+
 }
-.orders-empty h2 { font-family: var(--font-display); margin-bottom: 0.75rem; }
-.orders-empty p { color: var(--text-secondary); margin-bottom: 1.5rem; }
-.orders-empty a {
-  display: inline-block;
-  background: var(--orange-gradient); color: white;
-  font-weight: 700; padding: 12px 28px; border-radius: 8px;
-  text-decoration: none; transition: var(--transition);
+
+.order-header h3{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
 }
-.orders-empty a:hover { transform: translateY(-2px); box-shadow: var(--shadow-orange); }
 
-/* Keep any existing selector names for compatibility */
-.order-container { max-width: 900px; margin: 0 auto; padding: calc(var(--navbar-height) + 2rem) 2rem 3rem; min-height: 100vh; }
-.no-orders { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 3rem; text-align: center; }
-.no-orders h2 { font-family: var(--font-display); margin-bottom: 0.75rem; }
-.no-orders p { color: var(--text-secondary); }
-.order-list { display: flex; flex-direction: column; gap: 1rem; }
-.order-item { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; transition: var(--transition); }
-.order-item:hover { border-color: var(--border-orange); }
-.order-item h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem; }
-.order-item p { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 0.25rem; }
-.order-item .order-amount { color: var(--orange-primary); font-weight: 700; }
-.order-item .order-stat { display: inline-block; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(56,161,105,0.15); color: #68d391; border: 1px solid rgba(56,161,105,0.3); }
+.order-header p{
 
-@media (max-width: 640px) { .order-container, .orders-page { padding: calc(var(--navbar-height) + 1rem) 1rem 2rem; } }
+    color:var(--text-muted);
+
+    font-size:14px;
+
+}
+
+/* ======================================
+        STATUS BADGE
+====================================== */
+
+.order-status{
+
+    padding:10px 20px;
+
+    border-radius:40px;
+
+    font-weight:700;
+
+    font-size:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    white-space:nowrap;
+
+}
+
+.status-placed{
+
+    background:#ff980020;
+
+    color:#ff9800;
+
+}
+
+.status-confirmed{
+
+    background:#2196f320;
+
+    color:#4dabff;
+
+}
+
+.status-preparing{
+
+    background:#ff572220;
+
+    color:#ff7043;
+
+}
+
+.status-out-for-delivery{
+
+    background:#8e24aa20;
+
+    color:#ce93d8;
+
+}
+
+.status-delivered{
+
+    background:#4caf5020;
+
+    color:#66bb6a;
+
+}
+
+/* ======================================
+        ORDER ITEMS
+====================================== */
+
+.order-items{
+
+    padding:28px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.order-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:16px;
+
+    background:rgba(255,255,255,.03);
+
+    border-radius:16px;
+
+    transition:.3s;
+
+}
+
+.order-item:hover{
+
+    background:rgba(255,140,0,.05);
+
+}
+
+.order-food-img{
+
+    width:78px;
+
+    height:78px;
+
+    object-fit:cover;
+
+    border-radius:16px;
+
+    border:2px solid rgba(255,255,255,.08);
+
+}
+
+.order-food-details{
+
+    flex:1;
+
+}
+
+.order-food-details h4{
+
+    font-size:18px;
+
+    margin-bottom:8px;
+
+}
+
+.order-food-details p{
+
+    color:var(--text-secondary);
+
+}
+
+.order-food-price{
+
+    font-size:22px;
+
+    font-weight:800;
+
+    color:var(--orange-primary);
+
+}
+
+/* =========================================================
+            DELIVERY TIMELINE
+========================================================= */
+
+.order-tracker{
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin:15px 30px 35px;
+
+    padding:10px 0;
+
+}
+
+.order-tracker::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:35px;
+
+    left:8%;
+
+    width:84%;
+
+    height:6px;
+
+    background:#2b2b2b;
+
+    border-radius:50px;
+
+    z-index:0;
+
+    overflow:hidden;
+
+}
+
+
+.track-step{
+
+    width:20%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+.track-circle{
+
+    width:56px;
+
+    height:56px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:26px;
+
+    background:#252525;
+
+    border:3px solid #444;
+
+    transition:.35s;
+
+}
+
+.track-title{
+
+    margin-top:12px;
+
+    font-size:13px;
+
+    color:#999;
+
+    text-align:center;
+
+    font-weight:600;
+
+}
+
+.track-active .track-circle{
+
+    background:linear-gradient(
+        135deg,
+        #ff9800,
+        #ff5722
+    );
+
+    color:white;
+
+    border:none;
+
+    box-shadow:
+        0 0 25px rgba(255,136,0,.45);
+
+}
+
+.track-active .track-title{
+
+    color:white;
+
+}
+
+
+/* =========================================================
+                    FOOTER
+========================================================= */
+
+.order-footer{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:20px;
+
+    padding:25px 30px;
+
+    border-top:1px solid rgba(255,255,255,.06);
+
+}
+
+.order-footer>div{
+
+    background:rgba(255,255,255,.03);
+
+    border-radius:16px;
+
+    padding:18px;
+
+    text-align:center;
+
+}
+
+.order-footer strong{
+
+    display:block;
+
+    margin-bottom:10px;
+
+    font-size:15px;
+
+    color:#fff;
+
+}
+
+.order-total{
+
+    font-size:24px;
+
+    font-weight:800;
+
+    color:#ff9800;
+
+}
+
+.order-payment{
+
+    font-size:16px;
+
+    color:#ddd;
+
+}
+
+.order-eta{
+
+    font-size:18px;
+
+    color:#4caf50;
+
+    font-weight:700;
+
+}
+
+
+/* =========================================================
+            REVIEW & REORDER
+========================================================= */
+
+.order-review{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:18px;
+
+    padding:25px;
+
+    border-top:1px solid rgba(255,255,255,.05);
+
+}
+
+.review-btn{
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        #ff9800,
+        #ff5722
+    );
+
+    transition:.35s;
+
+}
+
+.review-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 30px rgba(255,136,0,.35);
+
+}
+
+.reorder-btn{
+
+    background:linear-gradient(
+        135deg,
+        #2196f3,
+        #1565c0
+    );
+
+}
+
+.reorder-btn:hover{
+
+    box-shadow:0 10px 30px rgba(33,150,243,.35);
+
+}
+
+
+/* =========================================================
+        EMPTY PAGE
+========================================================= */
+
+.no-orders{
+
+    margin-top:60px;
+
+    padding:80px;
+
+    background:var(--bg-card);
+
+    border-radius:24px;
+
+    text-align:center;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.no-orders h2{
+
+    font-size:36px;
+
+    margin-bottom:20px;
+
+}
+
+.no-orders p{
+
+    color:#aaa;
+
+    margin-bottom:30px;
+
+}
+
+.no-orders button{
+
+    border:none;
+
+    padding:14px 30px;
+
+    border-radius:12px;
+
+    background:linear-gradient(
+        135deg,
+        #ff9800,
+        #ff5722
+    );
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+.no-orders button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 30px rgba(255,136,0,.35);
+
+}
+
+/* =========================================================
+                RESPONSIVE DESIGN
+========================================================= */
+
+@media (max-width:1100px){
+
+.order-footer{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media (max-width:900px){
+
+.order-header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+}
+
+.order-item{
+
+flex-wrap:wrap;
+
+}
+
+.order-food-price{
+
+width:100%;
+
+text-align:right;
+
+margin-top:10px;
+
+}
+
+}
+
+@media (max-width:768px){
+
+.orders-container{
+
+padding:
+calc(var(--navbar-height) + 20px)
+18px
+80px;
+
+}
+
+.orders-title{
+
+font-size:32px;
+
+}
+
+.order-card{
+
+border-radius:18px;
+
+}
+
+.order-items{
+
+padding:18px;
+
+}
+
+.order-item{
+
+padding:12px;
+
+}
+
+.order-food-img{
+
+width:70px;
+
+height:70px;
+
+}
+
+.order-food-details h4{
+
+font-size:16px;
+
+}
+
+.order-tracker{
+
+overflow-x:auto;
+
+padding-bottom:15px;
+
+gap:20px;
+
+}
+
+.order-tracker::before{
+
+display:none;
+
+}
+
+.track-step{
+
+min-width:90px;
+
+}
+
+.order-review{
+
+flex-direction:column;
+
+}
+
+.review-btn{
+
+width:100%;
+
+}
+
+}
+
+@media (max-width:520px){
+
+.orders-title{
+
+font-size:26px;
+
+}
+
+.order-header{
+
+padding:18px;
+
+}
+
+.order-items{
+
+padding:15px;
+
+}
+
+.order-footer{
+
+padding:18px;
+
+}
+
+.order-food-img{
+
+width:60px;
+
+height:60px;
+
+}
+
+.track-circle{
+
+width:48px;
+
+height:48px;
+
+font-size:22px;
+
+}
+
+.track-title{
+
+font-size:12px;
+
+}
+
+}
+
+
+/* =========================================================
+                ANIMATIONS
+========================================================= */
+
+@keyframes fadeInUp{
+
+from{
+
+opacity:0;
+
+transform:
+translateY(35px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:
+translateY(0);
+
+}
+
+}
+
+.order-card{
+
+animation:
+fadeInUp
+.45s
+ease;
+
+}
+
+@keyframes pulseStatus{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+.track-active
+.track-circle{
+
+animation:
+pulseStatus
+2s
+infinite;
+
+}
+
+
+/* =========================================================
+            FOOD IMAGE EFFECT
+========================================================= */
+
+.order-food-img{
+
+transition:
+transform .35s,
+box-shadow .35s;
+
+}
+
+.order-item:hover
+.order-food-img{
+
+transform:scale(1.08);
+
+box-shadow:
+0 10px 25px rgba(255,140,0,.35);
+
+}
+
+
+/* =========================================================
+            STATUS HOVER
+========================================================= */
+
+.order-status{
+
+transition:.35s;
+
+}
+
+.order-status:hover{
+
+transform:translateY(-2px);
+
+}
+
+
+/* =========================================================
+            GLASS EFFECT
+========================================================= */
+
+.order-card{
+
+backdrop-filter:blur(14px);
+
+-webkit-backdrop-filter:blur(14px);
+
+}
+
+.order-footer>div{
+
+backdrop-filter:blur(12px);
+
+}
+
+
+/* =========================================================
+            SCROLLBAR
+========================================================= */
+
+.order-tracker::-webkit-scrollbar{
+
+height:8px;
+
+}
+
+.order-tracker::-webkit-scrollbar-thumb{
+
+background:#ff9800;
+
+border-radius:20px;
+
+}
+
+
+/* =========================================================
+            HOVER BUTTONS
+========================================================= */
+
+.review-btn{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.review-btn::before{
+
+content:"";
+
+position:absolute;
+
+left:-100%;
+
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.25),
+
+transparent
+
+);
+
+transition:.6s;
+
+}
+
+.review-btn:hover::before{
+
+left:120%;
+
+}
+
+
+/* =========================================================
+            DELIVERY ETA
+========================================================= */
+
+.order-eta{
+
+font-size:18px;
+
+font-weight:700;
+
+color:#4caf50;
+
+animation:
+pulseStatus
+2s
+infinite;
+
+}
+
+
+/* =========================================================
+            TRACK LINE GLOW
+========================================================= */
+
+.track-active::after{
+
+content:"";
+
+position:absolute;
+
+top:26px;
+
+left:50%;
+
+width:70%;
+
+height:4px;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#ff9800,
+
+#ff5722
+
+);
+
+transform:translateX(50%);
+
+z-index:-1;
+
+}
+
+.track-step:last-child::after{
+
+display:none;
+
+}
+
+
+/* =========================================================
+            PREMIUM SHADOW
+========================================================= */
+
+.order-card:hover{
+
+box-shadow:
+
+0 20px 60px rgba(0,0,0,.35),
+
+0 0 40px rgba(255,140,0,.12);
+
+}
+
+
+/* =========================================================
+            REVIEW SECTION
+========================================================= */
+
+.order-review{
+
+background:
+
+rgba(255,255,255,.02);
+
+}
+
+
+/* =========================================================
+            SMOOTH TRANSITIONS
+========================================================= */
+
+*{
+
+transition:
+
+background .25s,
+
+color .25s,
+
+border-color .25s;
+
+}

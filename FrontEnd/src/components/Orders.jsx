@@ -1,14 +1,26 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './CSS/Orders.css'
-import { GlobalStateContext } from '../context/GlobalStateContext'
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import "./CSS/Orders.css";
+import { GlobalStateContext } from "../context/GlobalStateContext";
 import { loadOrders } from "../services/orderService";
 
 const OrdersPage = () => {
-    const { isLoggedIn, user } = useContext(GlobalStateContext)
-    const [orders, setOrders] = useState([])
-    const [loading, setLoading] = useState(true)
-    const navigate = useNavigate()
+
+    const { isLoggedIn, user } = useContext(GlobalStateContext);
+
+    const [orders, setOrders] = useState([]);
+
+    const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    const orderSteps = [
+        "Placed",
+        "Confirmed",
+        "Preparing",
+        "Out For Delivery",
+        "Delivered",
+    ];
 
     useEffect(() => {
 
@@ -22,164 +34,462 @@ const OrdersPage = () => {
 
         fetchOrders();
 
-    }, [user, isLoggedIn, navigate]);
+        const interval = setInterval(() => {
 
-const fetchOrders = async () => {
+            fetchOrders();
 
-    if (!user) return;
+        }, 3000);
 
-    try {
+        return () => clearInterval(interval);
 
-        const data = await loadOrders(user.uid);
+    }, [user, isLoggedIn]);
 
-        setOrders(
-    data.sort((a, b) => {
+    const fetchOrders = async () => {
 
-        if (!a.createdAt || !b.createdAt)
-            return 0;
+        if (!user) return;
 
-        return (
-            b.createdAt.seconds -
-            a.createdAt.seconds
+        try {
+
+            const data = await loadOrders(user.uid);
+
+            const sorted = data.sort((a, b) => {
+
+                if (!a.createdAt || !b.createdAt) return 0;
+
+                return (
+
+                    b.createdAt.seconds -
+
+                    a.createdAt.seconds
+
+                );
+
+            });
+
+            setOrders(sorted);
+
+        } catch (err) {
+
+            console.error(err);
+
+        }
+
+        setLoading(false);
+
+    };
+
+    const getCurrentStatus = (createdAt) => {
+
+        if (!createdAt) return "Placed";
+
+        const seconds = Math.floor(
+
+            (Date.now() - createdAt.toDate().getTime()) /
+
+            1000
+
         );
 
-        })
-    );
+        if (seconds < 1000) return "Placed";
 
-    } catch (error) {
+        if (seconds < 2000) return "Confirmed";
 
-        console.error(error);
+        if (seconds < 3000) return "Preparing";
 
-    }
+        if (seconds < 4000) return "Out For Delivery";
 
-    setLoading(false);
+        return "Delivered";
 
-};
+    };
 
-        const getStatusClass = (status) => {
-            switch (status) {
-                case "Placed":
-                    return "status-placed";
+    const getStatusClass = (status) => {
 
-                case "Confirmed":
-                    return "status-confirmed";
+        switch (status) {
 
-                case "Preparing":
-                    return "status-preparing";
+            case "Placed":
 
-                case "Out For Delivery":
-                    return "status-out-for-delivery";
+                return "status-placed";
 
-                case "Delivered":
-                    return "status-delivered";
+            case "Confirmed":
 
-                default:
-                    return "";
-            }
-        };
+                return "status-confirmed";
 
-        const getStatusIcon = (status) => {
-            switch (status) {
-                case "Placed":
-                    return "📝";
+            case "Preparing":
 
-                case "Confirmed":
-                    return "✅";
+                return "status-preparing";
 
-                case "Preparing":
-                    return "👨‍🍳";
+            case "Out For Delivery":
 
-                case "Out For Delivery":
-                    return "🛵";
+                return "status-out-for-delivery";
 
-                case "Delivered":
-                    return "🍽️";
+            case "Delivered":
 
-                default:
-                    return "📦";
-            }
-        };
+                return "status-delivered";
 
-    if (!isLoggedIn) {
-        return null
-    }
+            default:
 
-    return (
+                return "";
+
+        }
+
+    };
+
+    const getStatusIcon = (status) => {
+
+        switch (status) {
+
+            case "Placed":
+
+                return "📝";
+
+            case "Confirmed":
+
+                return "✅";
+
+            case "Preparing":
+
+                return "👨‍🍳";
+
+            case "Out For Delivery":
+
+                return "🛵";
+
+            case "Delivered":
+
+                return "🍽️";
+
+            default:
+
+                return "📦";
+
+        }
+
+    };
+
+    if (!isLoggedIn) return null;
+
+        return (
         <div className="orders-container">
-            <h1>My Orders</h1>
-            
-            {loading ? (
-                <div className="orders-loading">Loading your orders...</div>
-            ) : !Array.isArray(orders) || orders.length === 0 ? (
-                <div className="no-orders">
-                    <h2>No orders yet</h2>
-                    <p>Hungry? Order some delicious food!</p>
-                    <button onClick={() => navigate('/#items')}>Browse Menu</button>
-                </div>
-            ) : (
-                <div className="orders-list">
-                    {orders.map((order) => (
-                        <div key={order.id} className="order-card">
-                            <div className="order-header">
-                                <div className="order-id">
-                                    Order #{order.id.slice(0,8)}
-                                </div>
-                                <div className="order-date">
-                                   {
-                                        order.createdAt
-                                            ? order.createdAt.toDate().toLocaleString("en-IN")
-                                            : "Just Now"
-                                    }
-                                </div>
-                            </div>
 
-                            <div className="order-items">
-                                {order.items?.map((item, index) => (
-                                    <div key={index} className="order-item">
-                                        <span className="item-name">{item.name}</span>
-                                        <span className="item-quantity">x{item.quantity}</span>
-                                        <span className="item-price">₹{item.price}</span>
+            <h1 className="orders-title">
+                📦 My Orders
+            </h1>
+
+            {loading ? (
+
+                <div className="orders-loading">
+
+                    Loading your orders...
+
+                </div>
+
+            ) : orders.length === 0 ? (
+
+                <div className="no-orders">
+
+                    <h2>🍔 No Orders Yet</h2>
+
+                    <p>
+                        Looks like you haven't ordered anything.
+                    </p>
+
+                    <button
+                        onClick={() => navigate("/")}
+                    >
+                        Browse Menu
+                    </button>
+
+                </div>
+
+            ) : (
+
+                <div className="orders-list">
+
+                    {orders.map((order) => {
+
+                        const liveStatus =
+                            getCurrentStatus(
+                                order.createdAt
+                            );
+
+                        return (
+
+                            <div
+                                key={order.id}
+                                className="order-card"
+                            >
+
+                                {/* Header */}
+
+                                <div className="order-header">
+
+                                    <div>
+
+                                        <h3>
+
+                                            Order #
+
+                                            {order.id.slice(0, 8)}
+
+                                        </h3>
+
+                                        <p>
+
+                                            {order.createdAt
+
+                                                ? order.createdAt
+                                                      .toDate()
+                                                      .toLocaleString(
+                                                          "en-IN"
+                                                      )
+
+                                                : "Just Now"}
+
+                                        </p>
+
                                     </div>
-                                ))}
-                            </div>
+
+                                    <div
+                                        className={`order-status ${getStatusClass(
+                                            liveStatus
+                                        )}`}
+                                    >
+
+                                        {getStatusIcon(
+                                            liveStatus
+                                        )}
+
+                                        {" "}
+
+                                        {liveStatus}
+
+                                    </div>
+
+                                </div>
+
+                                {/* Items */}
+
+                                <div className="order-items">
+
+                                    {order.items?.map(
+                                        (
+                                            item,
+                                            index
+                                        ) => (
+
+                                            <div
+                                                key={index}
+                                                className="order-item"
+                                            >
+
+                                                <img
+                                                    src={
+                                                        item.image
+                                                    }
+                                                    alt={
+                                                        item.name
+                                                    }
+                                                    className="order-food-img"
+                                                />
+
+                                                <div className="order-food-details">
+
+                                                    <h4>
+
+                                                        {
+                                                            item.name
+                                                        }
+
+                                                    </h4>
+
+                                                    <p>
+
+                                                        Qty :
+                                                        {" "}
+                                                        {
+                                                            item.quantity
+                                                        }
+
+                                                    </p>
+
+                                                </div>
+
+                                                <div className="order-food-price">
+
+                                                    ₹
+                                                    {item.price}
+
+                                                </div>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+                                {/* Timeline */}
+
+                                <div className="order-tracker">
+
+                                    {orderSteps.map(
+                                        (
+                                            step,
+                                            index
+                                        ) => (
+
+                                            <div
+                                                key={
+                                                    step
+                                                }
+                                                className={`track-step ${
+                                                    orderSteps.indexOf(
+                                                        liveStatus
+                                                    ) >=
+                                                    index
+                                                        ? "track-active"
+                                                        : ""
+                                                }`}
+                                            >
+
+                                                <div className="track-circle">
+
+                                                    {step ===
+                                                    "Placed"
+                                                        ? "📝"
+                                                        : step ===
+                                                          "Confirmed"
+                                                        ? "✅"
+                                                        : step ===
+                                                          "Preparing"
+                                                        ? "👨‍🍳"
+                                                        : step ===
+                                                          "Out For Delivery"
+                                                        ? "🛵"
+                                                        : "🍽️"}
+
+                                                </div>
+
+                                                <div className="track-title">
+
+                                                    {step}
+
+                                                </div>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+                                {/* Footer */}
 
                                 <div className="order-footer">
 
-                                    <div className="order-total">
-                                        Total: <span>₹{order.total}</span>
+                                    <div>
+
+                                        <strong>
+
+                                            💰 Total
+
+                                        </strong>
+
+                                        <br />
+
+                                        ₹
+                                        {order.total}
+
                                     </div>
 
-                                    <div className="order-payment">
-                                        Payment: {order.paymentMethod}
+                                    <div>
+
+                                        <strong>
+
+                                            💳 Payment
+
+                                        </strong>
+
+                                        <br />
+
+                                        {
+                                            order.paymentMethod
+                                        }
+
                                     </div>
 
-                                    <div className={`order-status ${getStatusClass(order.status)}`}>
-                                        {getStatusIcon(order.status)}
-                                        {" "}
-                                        {order.status}
+                                    <div>
+
+                                        <strong>
+
+                                            🚚 ETA
+
+                                        </strong>
+
+                                        <br />
+
+                                        {liveStatus ===
+                                        "Delivered"
+
+                                            ? "Delivered"
+
+                                            : liveStatus ===
+                                              "Out For Delivery"
+
+                                            ? "10 mins"
+
+                                            : liveStatus ===
+                                              "Preparing"
+
+                                            ? "20 mins"
+
+                                            : liveStatus ===
+                                              "Confirmed"
+
+                                            ? "30 mins"
+
+                                            : "40 mins"}
+
                                     </div>
 
                                 </div>
 
-                                {order.status === "Delivered" && (
+                                {liveStatus ===
+                                    "Delivered" && (
 
                                     <div className="order-review">
 
                                         <button className="review-btn">
 
-                                            Rate & Review
+                                            ⭐ Rate &
+                                            Review
+
+                                        </button>
+
+                                        <button className="review-btn reorder-btn">
+
+                                            🔁 Reorder
 
                                         </button>
 
                                     </div>
 
                                 )}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    )
-}
 
-export default OrdersPage
+                            </div>
+
+                        );
+
+                    })}
+
+                </div>
+
+            )}
+
+        </div>
+
+    );
+
+};
+
+export default OrdersPage;

@@ -14,7 +14,7 @@ import './components/CSS/global.css'
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <App />,    
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/about', element: <AboutPage /> },

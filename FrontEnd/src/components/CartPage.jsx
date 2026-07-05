@@ -4,6 +4,8 @@ import './CSS/Cart.css'
 import { GlobalStateContext } from '../context/GlobalStateContext'
 import {loadCart,removeCartItem,updateCartQty,} from "../services/cartService";
 import {placeOrder, clearCart,} from "../services/orderService";
+import toast from "react-hot-toast";
+import AddressModal from "./AddressModal";
 
 const CartPage = () => {
     const {user,isLoggedIn,} = useContext(GlobalStateContext);
@@ -11,7 +13,8 @@ const CartPage = () => {
     const [total, setTotal] = useState(0)
     const [loading, setLoading] = useState(false)
     const [showPaymentModal, setShowPaymentModal] = useState(false)
-    const [showOrderPopup, setShowOrderPopup] = useState(false)
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [showAddressModal, setShowAddressModal] = useState(false);
     const [orderMessage, setOrderMessage] = useState('')
     const navigate = useNavigate()
 
@@ -127,62 +130,94 @@ const CartPage = () => {
 
             }
 
-            setShowPaymentModal(true);
+                setShowAddressModal(true);
+
+
+        };
+    
+
+        const handleAddressContinue = (address) => {
+
+        setSelectedAddress(address);
+
+        setShowAddressModal(false);
+
+        setShowPaymentModal(true);
 
         };
 
-const handleCOD = async () => {
+            const handleCOD = async () => {
 
-    try {
+                try {
 
-        setLoading(true);
+                    setLoading(true);
 
-        console.log("User UID:", user.uid);
-        console.log("Cart:", cartItems);
-        console.log("Total:", total);
+                    console.log("User UID:", user.uid);
+                    console.log("Cart:", cartItems);
+                    console.log("Total:", total);
 
-        await placeOrder(
-            user.uid,
-            cartItems,
-            total,
-            "Cash On Delivery"
-        );
+                    if (!selectedAddress) {
 
-        console.log("✅ Order Saved");
+                        toast.error("Please select an address");
 
-        await clearCart(user.uid, cartItems);
+                        return;
 
-        console.log("✅ Cart Cleared");
+                    }
 
-        setCartItems([]);
-        setTotal(0);
-        setShowPaymentModal(false);
+                    await placeOrder(
+                        user.uid,
+                        cartItems,
+                        total,
+                        "Cash On Delivery",
+                        selectedAddress
+                    );
 
-        setOrderMessage("🎉 Order Placed Successfully!");
-        setShowOrderPopup(true);
+                    console.log("✅ Order Saved");
 
-        setTimeout(() => {
-            setShowOrderPopup(false);
-            navigate("/orders");
-        }, 2000);
+                    await clearCart(user.uid, cartItems);
+                    setSelectedAddress(null);
 
-    } catch (err) {
+                    console.log("✅ Cart Cleared");
 
-        console.error("ORDER ERROR:", err);
-        alert(err.message);
+                    setCartItems([]);
+                    setTotal(0);
+                    setShowPaymentModal(false);
 
-    } finally {
+                    toast.success("🎉 Order Placed Successfully!");
 
-        setLoading(false);
+                    setTimeout(() => {
+                        navigate("/orders");
+                    }, 2000);
 
-    }
+                } catch (err) {
 
-};
+                    console.error("ORDER ERROR:", err);
+                    toast.error(err.message);
+
+                } finally {
+
+                    setLoading(false);
+
+                }
+
+            };
+
 
     return (
         <div className="cart-container">
-            {showOrderPopup && <div className="order-popup"><p>{orderMessage}</p></div>}
+            {
+                showAddressModal && (
 
+                <AddressModal
+
+                onClose={() => setShowAddressModal(false)}
+
+                onContinue={handleAddressContinue}
+
+                />
+
+                )
+                }
             {showPaymentModal && (
                 <div className="payment-modal">
                     <div className="payment-modal-content">

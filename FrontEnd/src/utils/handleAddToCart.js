@@ -1,4 +1,6 @@
 import { addCartItem, loadCart } from "../services/cartService";
+import toast from "react-hot-toast";
+
 
 export const handleAddToCart = async ({
     user,
@@ -9,7 +11,7 @@ export const handleAddToCart = async ({
 
     if (!user) {
 
-        alert("Please login first");
+        toast.error("Please login first");
 
         return false;
     }
@@ -32,7 +34,7 @@ export const handleAddToCart = async ({
 
         console.error(err);
 
-        alert("Unable to add item");
+        toast.error("Unable to add item");
 
         return false;
     }
