@@ -1,100 +1,269 @@
-import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import './CSS/Navbar.css'
-import { GlobalStateContext } from '../context/GlobalStateContext'
-import { useContext } from 'react'
+import React, { useState, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./CSS/Navbar.css";
+import { GlobalStateContext } from "../context/GlobalStateContext";
+import FavoritesPage from "./FavoritesPage";
 
 const Navbar = ({ darkMode, setDarkMode }) => {
-  const { displayCart, Quantity, isLoggedIn, user, logout } = useContext(GlobalStateContext)
-  const [showDropdown, setShowDropdown] = useState(false)
-  const location = useLocation()
-  
+  const {
+    cart,
+    isLoggedIn,
+    user,
+    logout
+  } = useContext(GlobalStateContext);
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const location = useLocation();
+
+  const isActive = (path) =>
+    location.pathname === path
+      ? "sb-nav-link active"
+      : "sb-nav-link";
+
+  const getUserName = () => {
+    if (!user) return "User";
+
+    return (
+      user.displayName ||
+      user.name ||
+      user.email?.split("@")[0] ||
+      "User"
+    );
+  };
 
   const getInitials = () => {
-    if (!user || !user.name) return '?'
-    const names = user.name.split(' ')
-    if (names.length > 1) return (names[0][0] + names[1][0]).toUpperCase()
-    return user.name.slice(0, 2).toUpperCase()
-  }
+    const fullName = getUserName();
 
-  const handleLogout = () => { setShowDropdown(false); logout() }
+    const names = fullName.split(" ");
 
-  const isActive = (path) => location.pathname === path ? 'sb-nav-link active' : 'sb-nav-link'
+    if (names.length > 1) {
+      return (
+        names[0][0] + names[1][0]
+      ).toUpperCase();
+    }
 
+    return fullName.substring(0, 2).toUpperCase();
+  };
+
+  const handleLogout = async () => {
+    setShowDropdown(false);
+    await logout();
+  };
+
+  const cartCount = cart.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
   return (
-    <nav className='sb-navbar'>
-      <div className='sb-navbar__inner'>
-        <Link to="/" className='sb-logo'>
-          <div className='sb-logo__icon'>🍽️</div>
-          <div className='sb-logo__text'>SmartBite <span>AI</span></div>
+    <nav className="sb-navbar">
+      <div className="sb-navbar__inner">
+
+        {/* ---------------- LOGO ---------------- */}
+
+        <Link to="/" className="sb-logo">
+          <div className="sb-logo__icon">🍽️</div>
+
+          <div className="sb-logo__text">
+            SmartBite <span>AI</span>
+          </div>
         </Link>
 
-        <div className='sb-nav-links'>
-          <Link to="/" className={isActive('/')}>Home</Link>
-          <Link to="/" className='sb-nav-link' onClick={() => setTimeout(() => document.getElementById('items')?.scrollIntoView({behavior:'smooth'}), 100)}>Menu</Link>
-          {isLoggedIn && <Link to="/orders" className={isActive('/orders')}>Orders</Link>}
-          {displayCart && <Link to="/cart" className={isActive('/cart')}>Cart</Link>}
-          <Link to="/about" className={isActive('/about')}>About</Link>
+        {/* ---------------- MENU ---------------- */}
+
+        <div className="sb-nav-links">
+
+          <Link
+            to="/"
+            className={isActive("/")}
+          >
+            Home
+          </Link>
+
+          <Link
+            to="/"
+            className="sb-nav-link"
+            onClick={() =>
+              setTimeout(() => {
+                document
+                  .getElementById("items")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+              }, 100)
+            }
+          >
+            Menu
+          </Link>
+
+          {isLoggedIn && (
+            <>
+
+              <Link
+                to="/orders"
+                className={isActive("/orders")}
+              >
+                Orders
+              </Link>
+            </>
+          )}
+
+          <Link
+          to="/favorites"
+          className={isActive("/favorites")}
+          >
+          ❤️ Favorites
+          </Link>
+
+          <Link
+            to="/about"
+            className={isActive("/about")}
+          >
+            About
+          </Link>
+
         </div>
 
-        <div className='sb-navbar__spacer' />
+        <div className="sb-navbar__spacer" />
 
-        <div className='sb-navbar__right'>
+        {/* ---------------- RIGHT ---------------- */}
 
-          {/* Dark / Light mode toggle */}
+        <div className="sb-navbar__right">
+
+          {/* Theme Toggle */}
+
           <button
-            className='sb-dark-toggle'
-            onClick={() => setDarkMode(!darkMode)}
-            title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            aria-label="Toggle theme"
+            className="sb-dark-toggle"
+            onClick={() =>
+              setDarkMode(!darkMode)
+            }
+            title={
+              darkMode
+                ? "Switch to Light Mode"
+                : "Switch to Dark Mode"
+            }
           >
-            <span className='sb-toggle-icon'>{darkMode ? '☀️' : '🌙'}</span>
-            <span className='sb-toggle-track'>
-              <span className={`sb-toggle-thumb${darkMode ? '' : ' sb-toggle-thumb--light'}`} />
+            <span className="sb-toggle-icon">
+              {darkMode ? "☀️" : "🌙"}
+            </span>
+
+            <span className="sb-toggle-track">
+              <span
+                className={`sb-toggle-thumb ${
+                  darkMode
+                    ? ""
+                    : "sb-toggle-thumb--light"
+                }`}
+              />
             </span>
           </button>
 
-          {displayCart && (
-            <Link to="/cart" className='sb-cart-btn'>
+          {/* Cart Icon */}
+
+          {isLoggedIn && (
+            <Link
+              to="/cart"
+              className="sb-cart-btn"
+            >
               🛒
-              {Quantity > 0 && <span className='sb-cart-badge'>{Quantity}</span>}
+
+              {cartCount > 0 && (
+                <span className="sb-cart-badge">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           )}
 
+          {/* User */}
+
           {isLoggedIn ? (
-            <div className='sb-user-wrap'>
-              <button className='sb-user-btn' onClick={() => setShowDropdown(!showDropdown)}>
-                <div className='sb-avatar'>{getInitials()}</div>
-                <span className='sb-user-name'>Hi, {user?.name?.split(' ')[0] || 'User'}</span>
-                <span className='sb-chevron'>{showDropdown ? '▲' : '▼'}</span>
+            <div className="sb-user-wrap">
+
+              <button
+                className="sb-user-btn"
+                onClick={() =>
+                  setShowDropdown(!showDropdown)
+                }
+              >
+                <div className="sb-avatar">
+                  {getInitials()}
+                </div>
+
+                <span className="sb-user-name">
+                  Hi, {getUserName().split(" ")[0]}
+                </span>
+
+                <span className="sb-chevron">
+                  {showDropdown ? "▲" : "▼"}
+                </span>
               </button>
+
               {showDropdown && (
-                <div className='sb-dropdown'>
-                  <Link to="/profile" className='sb-dropdown-item' onClick={() => setShowDropdown(false)}>
+                <div className="sb-dropdown">
+
+                  <Link
+                    to="/profile"
+                    className="sb-dropdown-item"
+                    onClick={() =>
+                      setShowDropdown(false)
+                    }
+                  >
                     👤 Profile
                   </Link>
-                  <Link to="/orders" className='sb-dropdown-item' onClick={() => setShowDropdown(false)}>
+
+                  <Link
+                    to="/orders"
+                    className="sb-dropdown-item"
+                    onClick={() =>
+                      setShowDropdown(false)
+                    }
+                  >
                     📦 My Orders
                   </Link>
-                  {displayCart && (
-                    <Link to="/cart" className='sb-dropdown-item' onClick={() => setShowDropdown(false)}>
-                      🛒 Cart {Quantity > 0 && `(${Quantity})`}
-                    </Link>
-                  )}
-                  <div className='sb-dropdown-divider' />
-                  <div className='sb-dropdown-item danger' onClick={handleLogout}>
+
+                  <Link
+                      to="/favorites"
+                      className="sb-dropdown-item"
+                      onClick={() => setShowDropdown(false)}
+                  >
+                      ❤️ Favorites
+                  </Link>
+
+                  <Link
+                    to="/cart"
+                    className="sb-dropdown-item"
+                    onClick={() =>
+                      setShowDropdown(false)
+                    }
+                  >
+                    🛒 Cart
+                  </Link>
+
+                  <div className="sb-dropdown-divider" />
+
+                  <button
+                    className="sb-dropdown-item danger"
+                    onClick={handleLogout}
+                  >
                     🚪 Logout
-                  </div>
+                  </button>
+
                 </div>
               )}
             </div>
           ) : (
-            <Link to="/login" className='sb-login-btn'>Login / Sign Up</Link>
+            <Link
+              to="/login"
+              className="sb-login-btn"
+            >
+              Login / Sign Up
+            </Link>
           )}
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

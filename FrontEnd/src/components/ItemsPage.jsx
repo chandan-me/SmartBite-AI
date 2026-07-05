@@ -1,253 +1,384 @@
-import React, { useContext, useEffect, useState,} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./CSS/Items.css";
+import "./CSS/RecipeModal.css";
+
 import { getRecipes } from "../recipeApi";
 import { GlobalStateContext } from "../context/GlobalStateContext";
 import RecipeModal from "./RecipeModal";
-import "./CSS/RecipeModal.css";
-import { addCartItem } from "../services/cartService";
+import { handleAddToCart } from "../utils/handleAddToCart";
 
 const ItemsPage = () => {
 
-  const { addFavorite } = useContext(GlobalStateContext);
+    const {
+        user,
+        setCart,
+        addFavorite,
+        favorites,
+        removeFavorite,
 
-  const [recipes, setRecipes] = useState([]);
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [cartQty, setCartQty] = useState({});
-  const {user,cart,setCart} = useContext(GlobalStateContext);
+    } = useContext(GlobalStateContext);
 
-  useEffect(() => {
-    async function loadRecipes() {
-      const data = await getRecipes();
+    const [recipes, setRecipes] = useState([]);
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
 
-      setRecipes(data);
-      setFilteredRecipes(data);
+    const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
-      setCategories([
-        "All",
-        ...new Set(data.map((item) => item.cuisine)),
-      ]);
+    const [cartQty, setCartQty] = useState({});
 
-      setLoading(false);
-    }
+    useEffect(() => {
 
-    loadRecipes();
-  }, []);
+        async function loadRecipes() {
 
-  useEffect(() => {
-    let temp = [...recipes];
+            const data = await getRecipes();
 
-    if (selectedCategory !== "All") {
-      temp = temp.filter(
-        (item) => item.cuisine === selectedCategory
-      );
-    }
+            setRecipes(data);
+            setFilteredRecipes(data);
 
-    if (search !== "") {
-      temp = temp.filter((item) =>
-        item.name
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      );
-    }
+            setCategories([
+                "All",
+                ...new Set(data.map((item) => item.cuisine)),
+            ]);
 
-    setFilteredRecipes(temp);
-  }, [recipes, search, selectedCategory]);
+            setLoading(false);
 
-  const catEmoji = (cat) => {
-    const map = {
-      All: "🍽️",
-      Italian: "🍕",
-      Indian: "🍛",
-      American: "🍔",
-      Mexican: "🌮",
-      Mediterranean: "🥗",
-      Japanese: "🍣",
-      Thai: "🍜",
-      Korean: "🍱",
+        }
+
+        loadRecipes();
+
+    }, []);
+
+    useEffect(() => {
+
+        let temp = [...recipes];
+
+        if (selectedCategory !== "All") {
+
+            temp = temp.filter(
+                (item) => item.cuisine === selectedCategory
+            );
+
+        }
+
+        if (search !== "") {
+
+            temp = temp.filter((item) =>
+                item.name
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+            );
+
+        }
+
+        setFilteredRecipes(temp);
+
+    }, [recipes, search, selectedCategory]);
+
+    const catEmoji = (cat) => {
+
+        const map = {
+
+            All: "🍽️",
+            Italian: "🍕",
+            Indian: "🍛",
+            American: "🍔",
+            Mexican: "🌮",
+            Mediterranean: "🥗",
+            Japanese: "🍣",
+            Thai: "🍜",
+            Korean: "🍱",
+
+        };
+
+        return map[cat] || "🍴";
+
     };
 
-    return map[cat] || "🍴";
-  };
+    const onAddCart = async (item) => {
 
-  if (loading) {
-    return (
-      <div className="loading">
-        <h2>🍕 Loading Recipes...</h2>
-      </div>
-    );
-  }
+        const qty = cartQty[item.id] || 1;
 
-  return (
-  <div className="sb-menu-section">
+        const success = await handleAddToCart({
 
-    <div className="sb-menu-header">
-      <h2 className="sb-menu-title">
-        🍴 Our Full Menu
-      </h2>
+            user,
+            recipe: item,
+            qty,
+            setCart,
 
-      <span>
-        {filteredRecipes.length} Recipes
-      </span>
-    </div>
+        });
 
-    <div className="sb-search-container">
-      <input
-        type="text"
-        className="sb-search"
-        placeholder="Search Recipes..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </div>
+        if (success) {
 
-    <div className="sb-cat-nav">
-      {categories.map((cat) => (
-        <button
-          key={cat}
-          className={`sb-cat-btn ${
-            selectedCategory === cat ? "active" : ""
-          }`}
-          onClick={() => setSelectedCategory(cat)}
-        >
-          {catEmoji(cat)} {cat}
-        </button>
-      ))}
-    </div>
+            alert(`${item.name} added to cart`);
 
-    {/* Recipe Cards will come here */}
-    <div className="sb-menu-grid">
-
-  {filteredRecipes.map((item) => (
-
-    <div
-      key={item.id}
-      className="sb-menu-card"
-    >
-
-      <div className="sb-menu-card__img-wrap">
-
-        <img
-          src={item.image}
-          alt={item.name}
-          className="sb-menu-card__img"
-        />
-
-        <span className="sb-menu-card__cat-badge">
-          {item.cuisine}
-        </span>
-
-      </div>
-
-      <div className="sb-menu-card__body">
-
-        <h3 className="sb-menu-card__name">
-          {item.name}
-        </h3>
-        <div className="rating">
-        <p>⭐ {item.rating}  <span>({item.reviewCount} Reviews)</span></p>
-        </div>
-        <p>🍽 Serves: {item.servings}</p>
-
-        <p>🔥 {item.caloriesPerServing} Calories</p>
-
-<div className="sb-menu-card__footer">
-
-    <button
-        className="favorite-btn-card"
-        onClick={() => addFavorite(item)}
-    >
-        ❤️ Favorite
-    </button>
-
-    <button
-        className="view-btn-card"
-        onClick={() => {
-            setSelectedRecipe(item);
-            setShowModal(true);
-        }}
-    >
-        👁 View Recipe
-    </button>
-
-</div>
-
-<div className="sb-menu-card__footer">
-
-  <div className="card-add-cart">
-
-    <button
-      className="qty-btn"
-      onClick={() =>
-        setCartQty((prev) => ({
-          ...prev,
-          [item.id]: Math.max(1, (prev[item.id] || 1) - 1),
-        }))
-      }
-    >
-      −
-    </button>
-
-    <span className="qty-number">
-      {cartQty[item.id] || 1}
-    </span>
-
-    <button
-      className="qty-btn"
-      onClick={() =>
-        setCartQty((prev) => ({
-          ...prev,
-          [item.id]: (prev[item.id] || 1) + 1,
-        }))
-      }
-    >
-      +
-    </button>
-
-    <button
-      className="add-cart-card-btn"
-      onClick={(handleAddCart) =>
-        addToCart(item, cartQty[item.id] || 1)
-      }
-    >
-      🛒 {cartQty[item.id] || 1}
-    </button>
-
-  </div>
-
-</div>
-
-      </div>
-
-    </div>
-
-  ))}
-
-</div>
-        {
-        showModal && selectedRecipe && (
-
-        <RecipeModal
-
-        recipe={selectedRecipe}
-
-        closeModal={() => {setShowModal(false)
-                  setSelectedRecipe(null);
-
-        }}
-        />
-
-        )
         }
-  </div>
+
+    };
+
+    if (loading) {
+
+        return (
+
+            <div className="loading">
+
+                <h2>🍕 Loading Recipes...</h2>
+
+            </div>
+
+        );
+
+    }
+
+    return (
+
+        <div
+            className="sb-menu-section"
+            id="items"
+        >
+
+            <div className="sb-menu-header">
+
+                <h2 className="sb-menu-title">
+                    🍴 Our Full Menu
+                </h2>
+
+                <span>
+                    {filteredRecipes.length} Recipes
+                </span>
+
+            </div>
+
+            <div className="sb-search-container">
+
+                <input
+                    className="sb-search"
+                    placeholder="Search Recipes..."
+                    value={search}
+                    onChange={(e) =>
+                        setSearch(e.target.value)
+                    }
+                />
+
+            </div>
+
+            <div className="sb-cat-nav">
+
+                {categories.map((cat) => (
+
+                    <button
+                        key={cat}
+                        className={`sb-cat-btn ${
+                            selectedCategory === cat
+                                ? "active"
+                                : ""
+                        }`}
+                        onClick={() =>
+                            setSelectedCategory(cat)
+                        }
+                    >
+                        {catEmoji(cat)} {cat}
+                    </button>
+
+                ))}
+
+            </div>
+
+            <div className="sb-menu-grid">
+
+                {filteredRecipes.map((item) => {
+
+                    const qty =
+                        cartQty[item.id] || 1;
+
+                    const isFavorite =
+                        favorites.some(
+                            (fav) => fav.id === item.id
+                        );
+                    
+                                    const price = (item.price || (100 + ((item.id * 37) % 200))).toFixed(0)
+
+
+                    return (
+
+                        <div
+                            key={item.id}
+                            className="sb-menu-card"
+                        >
+
+                            <div className="sb-menu-card__img-wrap">
+
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="sb-menu-card__img"
+                                />
+
+                                <span className="sb-menu-card__cat-badge">
+                                    {item.cuisine}
+                                </span>
+
+                            </div>
+
+                            <div className="sb-menu-card__body">
+
+                                <h3>{item.name}</h3>
 
   
-);
+
+                                <p>
+                                    🍽 Serves: {item.servings}
+                                </p>
+
+                                <p>
+                                    🔥{" "}
+                                    {item.caloriesPerServing}
+                                    {" "}Calories
+                                </p>
+
+
+                        <div className="sb-food-card__meta">
+
+                          <div className="rating">
+
+                              ⭐ {item.rating}
+
+                              <span>
+                                  ({item.reviewCount} Reviews)
+                              </span>
+
+                          </div>
+
+                          <div className="price">
+
+                              ₹{price}
+
+                          </div>
+
+                      </div>
+
+                                <div className="sb-menu-card__footer">
+
+                                <button
+                                    className="favorite-btn-card"
+                                    onClick={() => {
+
+                                        if (isFavorite) {
+
+                                            removeFavorite(item.id);
+
+                                        } else {
+
+                                            addFavorite(item);
+
+                                        }
+
+                                    }}
+                                >
+                                    {isFavorite ? "❤️ Added" : "🤍 Favorite"}
+                                </button>
+
+                                    <button
+                                        className="view-btn-card"
+                                        onClick={() => {
+
+                                            setSelectedRecipe(item);
+
+                                            setShowModal(true);
+
+                                        }}
+                                    >
+                                        👁 View Recipe
+                                    </button>
+
+                                </div>
+
+                                <div className="sb-menu-card__footer">
+
+                                    <div className="card-add-cart">
+
+                                        <button
+                                            className="qty-btn"
+                                            onClick={() =>
+                                                setCartQty(
+                                                    (prev) => ({
+                                                        ...prev,
+                                                        [item.id]:
+                                                            Math.max(
+                                                                1,
+                                                                qty - 1
+                                                            ),
+                                                    })
+                                                )
+                                            }
+                                        >
+                                            −
+                                        </button>
+
+                                        <span className="qty-number">
+                                            {qty}
+                                        </span>
+
+                                        <button
+                                            className="qty-btn"
+                                            onClick={() =>
+                                                setCartQty(
+                                                    (prev) => ({
+                                                        ...prev,
+                                                        [item.id]:
+                                                            qty + 1,
+                                                    })
+                                                )
+                                            }
+                                        >
+                                            +
+                                        </button>
+
+                                        <button
+                                            className="add-cart-card-btn"
+                                            onClick={() =>
+                                                onAddCart(item)
+                                            }
+                                        >
+                                            🛒 {qty}
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    );
+
+                })}
+
+            </div>
+
+            {showModal && selectedRecipe && (
+
+                <RecipeModal
+                    recipe={selectedRecipe}
+                    closeModal={() => {
+
+                        setShowModal(false);
+
+                        setSelectedRecipe(null);
+
+                    }}
+                />
+
+            )}
+
+        </div>
+
+    );
+
 };
 
 export default ItemsPage;

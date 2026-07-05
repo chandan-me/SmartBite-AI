@@ -66,6 +66,7 @@ const { setTogg, addFavorite} = useContext(GlobalStateContext);
   const [activeAICat, setActiveAICat] = useState('All')
   const [recipes, setRecipes] = useState([]);
   const [loadingRecipes, setLoadingRecipes] = useState(true);
+  
 
   useEffect(() => {
 

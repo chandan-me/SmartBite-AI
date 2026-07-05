@@ -8,6 +8,7 @@ import CartPage from './components/CartPage';
 import HomePage from './components/HomePage';
 import ProfilePage from './components/ProfilePage';
 import OrdersPage from './components/Orders';
+import FavoritesPage from "./components/FavoritesPage";
 import './components/CSS/global.css'
 
 const router = createBrowserRouter([
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { path: '/cart', element: <CartPage /> },
       { path: '/profile', element: <ProfilePage /> },
       { path: '/orders', element: <OrdersPage /> },
+      { path: '/favorites', element: <FavoritesPage /> }
     ]
   }
 ])

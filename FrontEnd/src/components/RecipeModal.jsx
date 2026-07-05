@@ -1,48 +1,19 @@
 import React, { useEffect, useState, useContext } from "react";
-import { addCartItem } from "../services/cartService";
+import "./CSS/RecipeModal.css";
 import { GlobalStateContext } from "../context/GlobalStateContext";
-
+import { handleAddToCart } from "../utils/handleAddToCart";
 
 const RecipeModal = ({ recipe, closeModal }) => {
 
-    const [qty,setQty]=useState(1);
-    const { user, cart, setCart } = useContext(GlobalStateContext);
-    const price = 149 + recipe.id * 18;
+    const [qty, setQty] = useState(1);
 
+    const { user, setCart } = useContext(GlobalStateContext);
 
     if (!recipe) return null;
 
-    const handleAddCart = async () => {
+    const price = 149 + recipe.id * 18;
 
-    if (!user) {
-
-        alert("Please login first");
-
-        return;
-
-    }
-
-    await addCartItem(
-        user.uid,
-        recipe,
-        qty
-    );
-
-    setCart([
-        ...cart,
-        {
-            ...recipe,
-            quantity: qty,
-            price: 149 + recipe.id * 18,
-        },
-    ]);
-
-    alert("Added to Cart");
-};
-
-
-
-        useEffect(() => {
+    useEffect(() => {
 
         const handleEsc = (e) => {
 
@@ -64,11 +35,41 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
     }, [closeModal]);
 
+    const onAddCart = async () => {
+
+        const success = await handleAddToCart({
+
+            user,
+
+            recipe,
+
+            qty,
+
+            setCart,
+
+        });
+
+        if (success) {
+
+            alert("✅ Added to Cart");
+
+            closeModal();
+
+        }
+
+    };
+
     return (
 
-        <div className="recipe-overlay" onClick={closeModal}>
+        <div
+            className="recipe-overlay"
+            onClick={closeModal}
+        >
 
-            <div className="recipe-modal" onClick={(e)=>e.stopPropagation()}>
+            <div
+                className="recipe-modal"
+                onClick={(e) => e.stopPropagation()}
+            >
 
                 <button
                     className="recipe-close"
@@ -99,34 +100,22 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
                     <div className="recipe-info">
 
-
                         <div>
-
                             <h4>Prep Time</h4>
-
                             <p>{recipe.prepTimeMinutes} mins</p>
-
                         </div>
 
                         <div>
-
                             <h4>Serves</h4>
-
                             <p>{recipe.servings}</p>
-
                         </div>
 
-                         <div>
-
+                        <div>
                             <h4>Calories</h4>
-
-                            <p> 🔥{recipe.caloriesPerServing}</p>
-
+                            <p>🔥 {recipe.caloriesPerServing}</p>
                         </div>
 
                     </div>
-
-
 
                     <h3>🥬 Ingredients</h3>
 
@@ -146,11 +135,7 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
                     <div className="combo-box">
 
-                        <h3>
-
-                            Recommended Combo
-
-                        </h3>
+                        <h3>Recommended Combo</h3>
 
                         <div className="combo-items">
 
@@ -166,41 +151,29 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
                     </div>
 
-                        <div className="nutrition-grid">
+                    <div className="nutrition-grid">
 
-                                    <div>
+                        <div>
+                            Protein
+                            <h2>25g</h2>
+                        </div>
 
-                                    Protein
+                        <div>
+                            Carbs
+                            <h2>40g</h2>
+                        </div>
 
-                                    <h2>25g</h2>
+                        <div>
+                            Fat
+                            <h2>12g</h2>
+                        </div>
 
-                                    </div>
+                        <div>
+                            Fiber
+                            <h2>8g</h2>
+                        </div>
 
-                                    <div>
-
-                                    Carbs
-
-                                    <h2>40g</h2>
-
-                                    </div>
-
-                                    <div>
-
-                                    Fat
-
-                                    <h2>12g</h2>
-
-                                    </div>
-
-                                    <div>
-
-                                    Fiber
-
-                                    <h2>8g</h2>
-
-                                    </div>
-
-                                    </div>
+                    </div>
 
                     <div className="recipe-rating-price">
 
@@ -220,29 +193,36 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
                     <div className="recipe-buttons">
 
-    <div className="qty-wrapper">
+                        <div className="qty-wrapper">
 
-        <button onClick={() => setQty(qty - 1)}
-                disabled={qty === 1}>
-            -
-        </button>
+                            <button
+                                onClick={() =>
+                                    setQty((prev) => Math.max(1, prev - 1))
+                                }
+                            >
+                                −
+                            </button>
 
-        <span>{qty}</span>
+                            <span>{qty}</span>
 
-        <button onClick={() => setQty(qty + 1)}>
-            +
-        </button>
+                            <button
+                                onClick={() =>
+                                    setQty((prev) => prev + 1)
+                                }
+                            >
+                                +
+                            </button>
 
-    </div>
+                        </div>
 
-    <button
-        className="cart-btn"
-        onClick={handleAddCart}
-    >
-        🛒 Add {qty}
-    </button>
+                        <button
+                            className="cart-btn"
+                            onClick={onAddCart}
+                        >
+                            🛒 Add {qty}
+                        </button>
 
-</div>
+                    </div>
 
                 </div>
 

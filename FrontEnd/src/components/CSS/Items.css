@@ -155,8 +155,7 @@
 
 .sb-menu-card__footer{
     display:flex;
-    gap:12px;
-    margin-top:20px;
+    gap:10px;
 }
 
 /* Favorite */
@@ -171,7 +170,10 @@
 
     border-radius:14px;
 
-    background:linear-gradient(135deg,#ff7b00,#ff9626);
+    /* background:linear-gradient(135deg,#ff7b00,#ff9626); */
+
+        background:#2a2a2a;
+
 
     color:#fff;
 

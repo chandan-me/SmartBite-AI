@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './CSS/Cart.css'
 import { GlobalStateContext } from '../context/GlobalStateContext'
 import {loadCart,removeCartItem,updateCartQty,} from "../services/cartService";
+import {placeOrder, clearCart,} from "../services/orderService";
 
 const CartPage = () => {
     const {user,isLoggedIn,} = useContext(GlobalStateContext);
@@ -39,76 +40,9 @@ const CartPage = () => {
     }, [user]);
 
     // ── Voice assistant event: open UPI payment ──
-    useEffect(() => {
-        const handleVoiceUPI = async (e) => {
-            const { userId, total: voiceTotal, cartItems: voiceItems } = e.detail
-            await triggerUPIPayment(userId, voiceTotal, voiceItems)
-        }
-        window.addEventListener('voice:open-upi', handleVoiceUPI)
-        return () => window.removeEventListener('voice:open-upi', handleVoiceUPI)
-    }, [])
 
-    const triggerUPIPayment = async (uid, amount, items) => {
-        setLoading(true)
-        try {
-            const orderResponse = await fetch('http://localhost:8000/create-order/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ uid, amount, items, paymentMethod: 'UPI' })
-            })
-            const orderData = await orderResponse.json()
-            if (!orderData.success) throw new Error(orderData.error || 'Failed to create order')
 
-            if (!window.Razorpay) {
-                await new Promise((resolve, reject) => {
-                    const script = document.createElement('script')
-                    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-                    script.onload = resolve; script.onerror = reject
-                    document.body.appendChild(script)
-                })
-            }
 
-            const options = {
-                key: 'rzp_test_SdTWYyzys8e6Zq',
-                amount: amount * 100,
-                currency: 'INR',
-                name: 'SmartBite AI',
-                description: 'Food Order Payment',
-                order_id: orderData.razorpayOrderId,
-                handler: async (response) => {
-                    try {
-                        const verifyRes = await fetch('http://localhost:8000/verify-payment/', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_signature: response.razorpay_signature,
-                                orderId: orderData.orderId
-                            })
-                        })
-                        const verifyData = await verifyRes.json()
-                        if (verifyData.success) {
-                            await clearCartItems(items)
-                            setOrderMessage('Payment successful! Order placed!')
-                            setShowOrderPopup(true)
-                            setTimeout(() => setShowOrderPopup(false), 3000)
-                            navigate('/orders')
-                        } else throw new Error('Payment verification failed')
-                    } catch (err) { alert('Payment verification failed: ' + err.message) }
-                },
-                prefill: { name: user?.name, email: user?.email },
-                theme: { color: '#ff6b00' },
-                modal: { ondismiss: () => setLoading(false) }
-            }
-            const rzp = new window.Razorpay(options)
-            rzp.on('payment.failed', (r) => { alert('Payment failed: ' + r.error.description); setLoading(false) })
-            rzp.open()
-        } catch (error) {
-            alert('Payment failed: ' + error.message)
-            setLoading(false)
-        }
-    }
 
     const handleIncreaseQuantity = async (item) => {
 
@@ -183,36 +117,67 @@ const CartPage = () => {
     );
     };
 
-    const handleCheckout = () => {
-        if (!isLoggedIn) { navigate('/login', { state: { from: { pathname: '/cart' } } }); return }
-        setShowPaymentModal(true)
-    }
+        const handleCheckout = () => {
 
-    const handleCOD = async () => {
-        setShowPaymentModal(false)
-        setLoading(true)
-        try {
-            const orderResponse = await fetch('http://localhost:8000/create-order/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.uid, amount: total, items: cartItems, paymentMethod: 'COD' })
-            })
-            const orderData = await orderResponse.json()
-            if (orderData.success) {
-                setOrderMessage('Order placed successfully! Your food will be delivered soon. 🎉')
-                setShowOrderPopup(true)
-                await clearCartItems(cartItems)
-                setTimeout(() => setShowOrderPopup(false), 3000)
-                navigate('/orders')
+            if (!isLoggedIn) {
+
+                navigate("/login");
+
+                return;
+
             }
-        } catch (error) { alert('Failed to place order') }
-        finally { setLoading(false) }
+
+            setShowPaymentModal(true);
+
+        };
+
+const handleCOD = async () => {
+
+    try {
+
+        setLoading(true);
+
+        console.log("User UID:", user.uid);
+        console.log("Cart:", cartItems);
+        console.log("Total:", total);
+
+        await placeOrder(
+            user.uid,
+            cartItems,
+            total,
+            "Cash On Delivery"
+        );
+
+        console.log("✅ Order Saved");
+
+        await clearCart(user.uid, cartItems);
+
+        console.log("✅ Cart Cleared");
+
+        setCartItems([]);
+        setTotal(0);
+        setShowPaymentModal(false);
+
+        setOrderMessage("🎉 Order Placed Successfully!");
+        setShowOrderPopup(true);
+
+        setTimeout(() => {
+            setShowOrderPopup(false);
+            navigate("/orders");
+        }, 2000);
+
+    } catch (err) {
+
+        console.error("ORDER ERROR:", err);
+        alert(err.message);
+
+    } finally {
+
+        setLoading(false);
+
     }
 
-    const handleUPI = async () => {
-        setShowPaymentModal(false)
-        await triggerUPIPayment(user.uid, total, cartItems)
-    }
+};
 
     return (
         <div className="cart-container">
@@ -223,7 +188,8 @@ const CartPage = () => {
                     <div className="payment-modal-content">
                         <h3>💳 Select Payment Method</h3>
                         <button className="payment-option cod" onClick={handleCOD} disabled={loading}>💵 Cash on Delivery</button>
-                        <button className="payment-option upi" onClick={handleUPI} disabled={loading}>📱 UPI / Card / NetBanking</button>
+                        {/* <button className="payment-option upi" onClick={handleUPI} disabled={loading}>📱 UPI / Card / NetBanking</button> */}
+                        <button className="payment-option upi" disabled>🚧 Coming Soon </button>
                         <button className="payment-option cancel" onClick={() => setShowPaymentModal(false)}>Cancel</button>
                     </div>
                 </div>

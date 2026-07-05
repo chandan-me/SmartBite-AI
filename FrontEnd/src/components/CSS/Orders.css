@@ -12,9 +12,10 @@
 
 .order-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 10px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 1.25rem 1.5rem;
+  margin-top: 3rem;
   margin-bottom: 1rem;
   transition: var(--transition);
 }
@@ -22,7 +23,7 @@
 
 .order-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 0.5rem;
 }
 .order-id { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; }
 .order-date { color: var(--text-muted); font-size: 0.82rem; }

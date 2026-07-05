@@ -2,7 +2,7 @@ import React, {createContext,useState,useEffect} from "react";
 import { logoutUser } from "../services/authService";
 import { loadCart } from "../services/cartService";
 import { useNavigate } from "react-router-dom";
-
+import { addFavoriteItem, loadFavorites, removeFavoriteItem,} from "../services/favoriteService";
 
 export const GlobalStateContext = createContext();
 
@@ -46,14 +46,9 @@ export const GlobalStateProvider = ({ children }) => {
   // Favorites
   // ---------------------------
 
-const [favorites, setFavorites] = useState(() => {
-  const saved = localStorage.getItem("favorites");
-  return saved ? JSON.parse(saved) : [];
-});
+const [favorites, setFavorites] = useState([]);
 
-useEffect(() => {
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-}, [favorites]);
+
   // ---------------------------
   // Create Session
   // ---------------------------
@@ -126,6 +121,24 @@ setCart(items);
     );
 
 };
+
+useEffect(() => {
+
+    if (!user) {
+
+        setFavorites([]);
+
+        return;
+
+    }
+
+    loadFavorites(user.uid)
+
+        .then(setFavorites)
+
+        .catch(console.error);
+
+}, [user]);
   // ---------------------------
   // Logout
   // ---------------------------
@@ -157,31 +170,64 @@ const toggleTheme = () => {
   // Favorites
   // ---------------------------
 
-const addFavorite = (recipe) => {
-  setFavorites((prev) => {
-    const exists = prev.find(
-      (item) => item.id === recipe.id
+const addFavorite = async (recipe) => {
+
+    if (!user) {
+
+        alert("Please login first");
+
+        return;
+
+    }
+
+    const exists = favorites.find(
+
+        item => item.id === recipe.id
+
     );
 
-    if (exists) return prev;
+    if (exists) {
 
-    return [...prev, recipe];
-  });
+        return;
+
+    }
+
+    await addFavoriteItem(
+
+        user.uid,
+
+        recipe
+
+    );
+
+    const data = await loadFavorites(user.uid);
+
+    setFavorites(data);
+
 };
 
-  const removeFavorite = (id) => {
 
-    const updated = favorites.filter(
-      (item) => item.id !== id
+const removeFavorite = async (id) => {
+
+    await removeFavoriteItem(
+
+        user.uid,
+
+        id
+
     );
 
-    setFavorites(updated);
+    const data = await loadFavorites(user.uid);
 
-  };
+    setFavorites(data);
 
-  const clearFavorites = () => {
-  setFavorites([]);
-  };
+};
+
+const clearFavorites = () => {
+
+    setFavorites([]);
+
+};
   // ---------------------------
   // Context Values
   // ---------------------------
