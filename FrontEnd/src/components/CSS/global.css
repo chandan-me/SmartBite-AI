@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════
+   SmartBite AI — Global Design Tokens
+═══════════════════════════════════════════ */
+
+:root {
+  /* ── Dark mode (default) ── */
+  --bg-primary: #0d0d0d;
+  --bg-secondary: #141414;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #1f1f1f;
+  --bg-elevated: #222222;
+
+  --orange-primary: #ff6b00;
+  --orange-secondary: #ff8c00;
+  --orange-light: #ffae42;
+  --orange-glow: rgba(255, 107, 0, 0.35);
+  --orange-glow-sm: rgba(255, 107, 0, 0.15);
+  --orange-gradient: linear-gradient(135deg, #ff6b00, #ff8c00);
+  --orange-gradient-full: linear-gradient(135deg, #ff4500 0%, #ff6b00 50%, #ffae42 100%);
+
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-muted: #6b6b6b;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-orange: rgba(255, 107, 0, 0.3);
+
+  /* Typography */
+  --font-display: 'Sora', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5);
+  --shadow-orange: 0 0 20px rgba(255, 107, 0, 0.4), 0 0 40px rgba(255, 107, 0, 0.2);
+  --shadow-orange-sm: 0 0 12px rgba(255, 107, 0, 0.25);
+  --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.7);
+
+  /* Spacing */
+  --navbar-height: 70px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Transitions */
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Light mode overrides ── */
+body.light {
+  --bg-primary: #f5f5f0;
+  --bg-secondary: #ededea;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafaf7;
+  --bg-elevated: #ffffff;
+
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #999999;
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-orange: rgba(255, 107, 0, 0.25);
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-orange: 0 0 20px rgba(255, 107, 0, 0.3), 0 0 40px rgba(255, 107, 0, 0.12);
+  --shadow-orange-sm: 0 0 12px rgba(255, 107, 0, 0.18);
+  --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Light mode: navbar background */
+body.light .sb-navbar {
+  background: rgba(245, 245, 240, 0.92);
+}
+
+/* Light mode: scrollbar */
+body.light ::-webkit-scrollbar-track { background: var(--bg-primary); }
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  border: none;
+  outline: none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--orange-primary); border-radius: 3px; }
+
+/* Utility */
+.orange-text { color: var(--orange-primary); }
+.glow-text {
+  text-shadow: 0 0 20px var(--orange-glow), 0 0 40px var(--orange-glow-sm);
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: var(--shadow-orange); }
+  50% { box-shadow: 0 0 40px rgba(255,107,0,0.7), 0 0 80px rgba(255,107,0,0.35); }
+}

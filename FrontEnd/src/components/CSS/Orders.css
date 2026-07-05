@@ -1,0 +1,83 @@
+/* ═══════════════════ ORDERS ═══════════════════ */
+.orders-page {
+  max-width: 900px; margin: 0 auto;
+  padding: calc(var(--navbar-height) + 2rem) 2rem 3rem;
+  min-height: 100vh;
+}
+.orders-page h1 {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+  margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;
+}
+.orders-page h1::before { content: '📦'; }
+
+.order-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+.order-card:hover { border-color: var(--border-orange); }
+
+.order-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+}
+.order-id { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; }
+.order-date { color: var(--text-muted); font-size: 0.82rem; }
+
+.order-status {
+  font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+}
+.order-status.delivered { background: rgba(56,161,105,0.15); color: #68d391; border: 1px solid rgba(56,161,105,0.3); }
+.order-status.pending { background: rgba(255,107,0,0.15); color: var(--orange-primary); border: 1px solid var(--border-orange); }
+.order-status.processing { background: rgba(66,153,225,0.15); color: #63b3ed; border: 1px solid rgba(66,153,225,0.3); }
+
+.order-items-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.order-item-row {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.5rem; border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+.order-item-row img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+.order-item-row .item-info { flex: 1; }
+.order-item-row .item-name { font-weight: 600; font-size: 0.88rem; }
+.order-item-row .item-qty { color: var(--text-muted); font-size: 0.78rem; }
+.order-item-row .item-price { color: var(--orange-primary); font-weight: 700; }
+
+.order-total {
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;
+  font-size: 0.9rem;
+}
+.order-total .total-amount { font-family: var(--font-display); font-weight: 800; color: var(--orange-primary); }
+
+.orders-empty {
+  text-align: center; padding: 4rem 2rem;
+  background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl);
+}
+.orders-empty h2 { font-family: var(--font-display); margin-bottom: 0.75rem; }
+.orders-empty p { color: var(--text-secondary); margin-bottom: 1.5rem; }
+.orders-empty a {
+  display: inline-block;
+  background: var(--orange-gradient); color: white;
+  font-weight: 700; padding: 12px 28px; border-radius: 8px;
+  text-decoration: none; transition: var(--transition);
+}
+.orders-empty a:hover { transform: translateY(-2px); box-shadow: var(--shadow-orange); }
+
+/* Keep any existing selector names for compatibility */
+.order-container { max-width: 900px; margin: 0 auto; padding: calc(var(--navbar-height) + 2rem) 2rem 3rem; min-height: 100vh; }
+.no-orders { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 3rem; text-align: center; }
+.no-orders h2 { font-family: var(--font-display); margin-bottom: 0.75rem; }
+.no-orders p { color: var(--text-secondary); }
+.order-list { display: flex; flex-direction: column; gap: 1rem; }
+.order-item { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; transition: var(--transition); }
+.order-item:hover { border-color: var(--border-orange); }
+.order-item h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem; }
+.order-item p { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 0.25rem; }
+.order-item .order-amount { color: var(--orange-primary); font-weight: 700; }
+.order-item .order-stat { display: inline-block; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(56,161,105,0.15); color: #68d391; border: 1px solid rgba(56,161,105,0.3); }
+
+@media (max-width: 640px) { .order-container, .orders-page { padding: calc(var(--navbar-height) + 1rem) 1rem 2rem; } }

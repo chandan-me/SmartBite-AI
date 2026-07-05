@@ -1,0 +1,77 @@
+/* ═══════════════════ FOOTER ═══════════════════ */
+.outerFooter {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 2rem;
+}
+
+.Footer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem 1.5rem;
+}
+
+.FooterContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.FooterSection h3 {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 6px;
+}
+.FooterSection h3::before {
+  content: '';
+  display: inline-block; width: 18px; height: 2px;
+  background: var(--orange-primary); border-radius: 2px;
+}
+
+.FooterSection ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.FooterSection ul li a {
+  color: var(--text-muted); font-size: 0.85rem;
+  transition: var(--transition); text-decoration: none;
+}
+.FooterSection ul li a:hover { color: var(--orange-primary); }
+
+.SocialIcons { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.SocialIcons a {
+  width: 36px; height: 36px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: 8px; color: var(--text-secondary);
+  font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; transition: var(--transition);
+}
+.SocialIcons a:hover { border-color: var(--orange-primary); color: var(--orange-primary); background: var(--orange-glow-sm); }
+
+/* Brand blurb */
+.footer-brand {
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.footer-brand-logo {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.1rem;
+}
+.footer-brand-logo span { color: var(--orange-primary); }
+.footer-brand p {
+  color: var(--text-muted); font-size: 0.82rem; line-height: 1.6; max-width: 220px;
+}
+
+.FooterBottom {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.5rem;
+}
+.FooterBottom p { color: var(--text-muted); font-size: 0.8rem; }
+
+@media (max-width: 768px) {
+  .Footer { padding: 2rem 1rem 1rem; }
+  .FooterContent { grid-template-columns: repeat(2, 1fr); }
+  .FooterBottom { flex-direction: column; text-align: center; }
+}
