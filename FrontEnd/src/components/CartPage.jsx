@@ -5,7 +5,7 @@ import { GlobalStateContext } from '../context/GlobalStateContext'
 import {loadCart,removeCartItem,updateCartQty,} from "../services/cartService";
 import {placeOrder, clearCart,} from "../services/orderService";
 import toast from "react-hot-toast";
-import AddressModal from "./AddressModal";
+import AddressModal from "./cart/AddressModal";
 
 const CartPage = () => {
     const {user,isLoggedIn,} = useContext(GlobalStateContext);

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./CSS/AddressModal.css";
-import { GlobalStateContext } from "../context/GlobalStateContext";
+import "../CSS/AddressModal.css";
+import { GlobalStateContext } from "../../context/GlobalStateContext";
 import {
     saveAddress,
     loadAddresses,
     deleteAddress,
-} from "../services/addressService";
+} from "../../services/addressService";
 
 const emptyAddress = {
     fullName: "",
