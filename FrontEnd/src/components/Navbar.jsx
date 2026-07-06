@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./CSS/Navbar.css";
 import { GlobalStateContext } from "../context/GlobalStateContext";
 import FavoritesPage from "./FavoritesPage";
+import logo from "../assets/logo.png";
 
 const Navbar = ({ darkMode, setDarkMode }) => {
   const {
@@ -61,8 +62,14 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
         {/* ---------------- LOGO ---------------- */}
 
-        <Link to="/" className="sb-logo">
-          <div className="sb-logo__icon">🍽️</div>
+          <Link to="/" className="sb-logo">
+            <div className="sb-logo__icon">
+              <img
+                src={logo}
+                alt="SmartBite AI Logo"
+                className="logo-img"
+              />
+            </div>
 
           <div className="sb-logo__text">
             SmartBite <span>AI</span>
@@ -103,7 +110,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                 to="/orders"
                 className={isActive("/orders")}
               >
-                Orders
+               My Orders
               </Link>
             </>
           )}
@@ -129,6 +136,24 @@ const Navbar = ({ darkMode, setDarkMode }) => {
         {/* ---------------- RIGHT ---------------- */}
 
         <div className="sb-navbar__right">
+
+                    {/* Cart Icon */}
+
+          {isLoggedIn && (
+            <Link
+              to="/cart"
+              className="sb-cart-btn"
+            >
+              🛒
+
+              {cartCount > 0 && (
+                <span className="sb-cart-badge">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          )}
+
 
           {/* Theme Toggle */}
 
@@ -158,22 +183,6 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             </span>
           </button>
 
-          {/* Cart Icon */}
-
-          {isLoggedIn && (
-            <Link
-              to="/cart"
-              className="sb-cart-btn"
-            >
-              🛒
-
-              {cartCount > 0 && (
-                <span className="sb-cart-badge">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          )}
 
           {/* User */}
 
