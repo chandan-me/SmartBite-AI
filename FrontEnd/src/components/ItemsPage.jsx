@@ -101,7 +101,7 @@ const ItemsPage = () => {
 
     const onAddCart = async (item) => {
 
-        const qty = cartQty[item.id] || 1;
+        const qty = cartQty[item.id] ?? 0;
 
         const success = await handleAddToCart({
 
@@ -116,6 +116,10 @@ const ItemsPage = () => {
 
             toast.success(`${item.name} added to cart`);
 
+        }
+        else {
+
+            toast.error(`Failed to add ${item.name} to cart`);
         }
 
     };
@@ -193,7 +197,7 @@ const ItemsPage = () => {
                 {filteredRecipes.map((item) => {
 
                     const qty =
-                        cartQty[item.id] || 1;
+                        cartQty[item.id] ?? 0;
 
                     const isFavorite =
                         favorites.some(
@@ -309,7 +313,7 @@ const ItemsPage = () => {
                                                         ...prev,
                                                         [item.id]:
                                                             Math.max(
-                                                                1,
+                                                                0,
                                                                 qty - 1
                                                             ),
                                                     })
@@ -338,14 +342,13 @@ const ItemsPage = () => {
                                             +
                                         </button>
 
-                                        <button
-                                            className="add-cart-card-btn"
-                                            onClick={() =>
-                                                onAddCart(item)
-                                            }
-                                        >
-                                            🛒 {qty}
-                                        </button>
+                                            <button
+                                                className="add-cart-card-btn"
+                                                onClick={() => onAddCart(item)}
+                                                disabled={qty === 0}
+                                            >
+                                                {qty === 0 ? "🛒 Add" : `🛒 ${qty}`}
+                                            </button>
 
                                     </div>
 

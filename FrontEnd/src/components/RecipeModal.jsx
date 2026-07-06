@@ -192,39 +192,6 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
                     </div>
 
-                    <div className="recipe-buttons">
-
-                        <div className="qty-wrapper">
-
-                            <button
-                                onClick={() =>
-                                    setQty((prev) => Math.max(1, prev - 1))
-                                }
-                            >
-                                −
-                            </button>
-
-                            <span>{qty}</span>
-
-                            <button
-                                onClick={() =>
-                                    setQty((prev) => prev + 1)
-                                }
-                            >
-                                +
-                            </button>
-
-                        </div>
-
-                        <button
-                            className="cart-btn"
-                            onClick={onAddCart}
-                        >
-                            🛒 Add {qty}
-                        </button>
-
-                    </div>
-
                 </div>
 
             </div>

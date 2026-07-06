@@ -251,6 +251,25 @@ max-height:none;
     transform:translateY(-3px);
 }
 
+.cart-btn-main{
+    flex:1;
+    border:none;
+    padding:16px;
+    border-radius:16px;
+    cursor:pointer;
+    font-size:17px;
+    font-weight:700;
+    transition:.35s;
+}
+.cart-btn-main{
+    background:#ff7b00;
+    color:white;
+}
+.cart-btn-main:hover{
+    background:#ff9d28;
+    transform:translateY(-3px);
+}
+
 /* Scroll */
 
 .recipe-modal::-webkit-scrollbar{
@@ -330,9 +349,9 @@ margin-bottom:20px;
 
 .qty-wrapper button{
 
-width:40px;
+width:50px;
 
-height:40px;
+height:50px;
 
 border:none;
 

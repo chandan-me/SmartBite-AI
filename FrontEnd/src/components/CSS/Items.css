@@ -193,7 +193,6 @@
 
     transform:translateY(-3px);
 
-    box-shadow:0 12px 25px rgba(255,123,0,.45);
 
 }
 
@@ -318,10 +317,16 @@
 
 }
 
+.add-cart-card-btn:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    background:#555;
+}
+
 .add-cart-card-btn{
 
     flex:1;
-    height: 45px;
+    height: 38px;
     Width:100px;
     border:none;
     border-radius:16px;

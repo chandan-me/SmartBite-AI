@@ -13,7 +13,6 @@ const AI_CATEGORIES = [
   { label: 'Sweet', emoji: '🍰', badge: 'sweet', keywords: [ "cake","dessert","sweet","cookie","brownie","ice cream","lava","halwa","chocolate","donut","cupcake","pie"] },
   { label: 'Fast Food', emoji: '🍔', badge: 'fast', keywords: ['burger','pizza','fries','sandwich','wrap'] },
   { label: 'Breakfast', emoji: '🍳', badge: 'breakfast', keywords: ['breakfast','pancake','waffle','omelette','cereal','smoothie bowl'] },
-  { label: 'Desserts', emoji: '🍨', badge: 'dessert', keywords: ['dessert','cake','ice cream','pudding'] },
 
 ]
 
