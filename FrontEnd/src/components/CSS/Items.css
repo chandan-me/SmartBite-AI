@@ -197,6 +197,45 @@
 
 }
 
+
+/* Favorite */
+
+.favorite-btn-card-main{
+
+    flex:1;
+
+    height:40px;
+
+    border:none;
+
+    width:100%;
+
+    border-radius:14px;
+
+    background:linear-gradient(135deg,#ff7b00,#ff9626);
+
+    color:#fff;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    box-shadow:0 8px 20px rgba(255,123,0,.35);
+
+}
+
+.favorite-btn-card-main:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(255,123,0,.45);
+
+}
+
 /* View Recipe */
 
 .view-btn-card{

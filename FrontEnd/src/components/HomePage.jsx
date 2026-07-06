@@ -62,7 +62,7 @@ const VoicePanelInline = ({ onOpen }) => (
 )
 
 const HomePage = () => {
-const { setTogg, addFavorite} = useContext(GlobalStateContext);
+const { setTogg, addFavorite, removeFavorite, favorites,} = useContext(GlobalStateContext);
   const [activeAICat, setActiveAICat] = useState('All')
   const [recipes, setRecipes] = useState([]);
   const [loadingRecipes, setLoadingRecipes] = useState(true);
@@ -206,8 +206,8 @@ const getAIRecs = () => {
           {aiRecs.map(item => {
             const badge = getBadge(item.name, item.cuisine)
             const rating = item.rating
-
-            const price = (item.price || (100 + ((item.id * 37) % 200))).toFixed(0)
+            const favorite = favorites.some(f => f.id === item.id);
+            const price = item.price
 
             return (
               <div key={item.id} className='sb-food-card'>
@@ -247,10 +247,14 @@ const getAIRecs = () => {
                 </div>
                 <div className='sb-food-card__footer'>
                     <button
-                      className="sb-add-btn"
-                      onClick={() => addFavorite(item)}
+                        className="favorite-btn-card-main"
+                        onClick={() => {
+                            favorite
+                                ? removeFavorite(item.id)
+                                : addFavorite(item);
+                        }}
                     >
-                      ❤️ Favorite
+                        {favorite ? "❤️ Added" : "🤍 Favorite"}
                     </button>
                 </div>
               </div>

@@ -200,7 +200,7 @@ const ItemsPage = () => {
                             (fav) => fav.id === item.id
                         );
                     
-                                    const price = (item.price || (100 + ((item.id * 37) % 200))).toFixed(0)
+                                    const price = item.price
 
 
                     return (

@@ -1,15 +1,9 @@
 export async function getRecipes() {
-  try {
-    const response = await fetch(
-      "https://dummyjson.com/recipes?limit=100"
-    );
-
+    const response = await fetch("https://dummyjson.com/recipes");
     const data = await response.json();
 
-    return data.recipes;
-
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+    return data.recipes.map(recipe => ({
+        ...recipe,
+        price: 100 + ((recipe.id * 37) % 200)
+    }));
 }

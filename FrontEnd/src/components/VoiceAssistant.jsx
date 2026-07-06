@@ -224,7 +224,8 @@ const VoiceAssistant = () => {
     }, 300);
   }, [navigate, speak]);
 
-  /* ── CART helpers ── */
+  /* ── this CART helpers ── */
+  
   const getCartItems = useCallback(() =>
     (foodData || []).filter(f => (f.Quantity || 0) > 0), [foodData]);
 

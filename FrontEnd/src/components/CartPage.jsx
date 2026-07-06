@@ -6,6 +6,7 @@ import {loadCart,removeCartItem,updateCartQty,} from "../services/cartService";
 import {placeOrder, clearCart,} from "../services/orderService";
 import toast from "react-hot-toast";
 import AddressModal from "./cart/AddressModal";
+import { openRazorpay } from "../services/paymentService";
 
 const CartPage = () => {
     const {user,isLoggedIn,} = useContext(GlobalStateContext);
@@ -146,62 +147,118 @@ const CartPage = () => {
 
         };
 
-            const handleCOD = async () => {
 
-                try {
+    const handleRazorpay = async () => {
 
-                    setLoading(true);
+    if (!selectedAddress) {
 
-                    console.log("User UID:", user.uid);
-                    console.log("Cart:", cartItems);
-                    console.log("Total:", total);
+        toast.error("Please select address");
 
-                    if (!selectedAddress) {
+        return;
 
-                        toast.error("Please select an address");
+    }
 
-                        return;
+    openRazorpay({
 
-                    }
+        amount: total,
 
-                    await placeOrder(
-                        user.uid,
-                        cartItems,
-                        total,
-                        "Cash On Delivery",
-                        selectedAddress
-                    );
+        user,
 
-                    console.log("✅ Order Saved");
+        onSuccess: async (payment) => {
 
-                    await clearCart(user.uid, cartItems);
-                    setSelectedAddress(null);
+            await placeOrder(
 
-                    console.log("✅ Cart Cleared");
+                user.uid,
 
-                    setCartItems([]);
-                    setTotal(0);
-                    setShowPaymentModal(false);
+                cartItems,
 
-                    toast.success("🎉 Order Placed Successfully!");
+                total,
 
-                    setTimeout(() => {
-                        navigate("/orders");
-                    }, 2000);
+                "Razorpay",
 
-                } catch (err) {
+                selectedAddress,
 
-                    console.error("ORDER ERROR:", err);
-                    toast.error(err.message);
+                "Paid",
 
-                } finally {
+                payment.razorpay_payment_id
 
-                    setLoading(false);
+            );
 
-                }
+            await clearCart(
 
-            };
+                user.uid,
 
+                cartItems
+
+            );
+
+            toast.success("Payment Successful 🎉");
+
+            navigate("/orders");
+
+        },
+
+        onFailure: () => {
+
+            toast.error("Payment Cancelled");
+
+        }
+
+    });
+
+};
+
+const handleCOD = async () => {
+
+    if (!selectedAddress) {
+
+        toast.error("Please select an address");
+
+        return;
+
+    }
+
+    try {
+
+        setLoading(true);
+
+        await placeOrder(
+
+            user.uid,
+            cartItems,
+            total,
+
+            "Cash On Delivery",
+
+            selectedAddress,
+
+            "Pending",
+
+            ""
+
+        );
+
+        await clearCart(user.uid, cartItems);
+
+        toast.success("Order Placed Successfully 🎉");
+
+        setShowPaymentModal(false);
+
+        navigate("/orders");
+
+    } catch (err) {
+
+        console.error(err);
+
+        toast.error("Failed to place order");
+
+    } finally {
+
+        setLoading(false);
+
+    }
+
+};
 
     return (
         <div className="cart-container">
@@ -224,7 +281,12 @@ const CartPage = () => {
                         <h3>💳 Select Payment Method</h3>
                         <button className="payment-option cod" onClick={handleCOD} disabled={loading}>💵 Cash on Delivery</button>
                         {/* <button className="payment-option upi" onClick={handleUPI} disabled={loading}>📱 UPI / Card / NetBanking</button> */}
-                        <button className="payment-option upi" disabled>🚧 Coming Soon </button>
+                        <button
+                            className="payment-option upi"
+                            onClick={handleRazorpay}
+                        >
+                            💳 Pay with UPI / Card / NetBanking
+                        </button>
                         <button className="payment-option cancel" onClick={() => setShowPaymentModal(false)}>Cancel</button>
                     </div>
                 </div>

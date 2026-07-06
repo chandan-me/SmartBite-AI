@@ -12,7 +12,7 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
     if (!recipe) return null;
 
-    const price = 149 + recipe.id * 18;
+    const price = recipe.price
 
     useEffect(() => {
 

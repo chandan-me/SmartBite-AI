@@ -1,25 +1,27 @@
 import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc
+    collection,
+    addDoc,
+    serverTimestamp,
+    getDocs,
+    deleteDoc,
+    doc,
+    updateDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 
-/* -----------------------------
-   Place Order
------------------------------- */
+/* =====================================================
+                    PLACE ORDER
+===================================================== */
 
 export const placeOrder = async (
     uid,
     cartItems,
     total,
     paymentMethod,
-    address
+    address,
+    paymentStatus = "Pending",
+    paymentId = ""
 ) => {
 
     const orderRef = await addDoc(
@@ -39,6 +41,10 @@ export const placeOrder = async (
 
             paymentMethod,
 
+            paymentStatus,
+
+            paymentId,
+
             address,
 
             status: "Placed",
@@ -49,7 +55,9 @@ export const placeOrder = async (
 
     );
 
-    // Auto Update Status
+    /* -----------------------------
+        Demo Status Updates
+    ----------------------------- */
 
     setTimeout(() => {
 
@@ -93,51 +101,63 @@ export const placeOrder = async (
 
 };
 
-/* -----------------------------
-   Load Orders
------------------------------- */
+/* =====================================================
+                    LOAD ORDERS
+===================================================== */
 
 export const loadOrders = async (uid) => {
 
-  const snap = await getDocs(
-    collection(db, "users", uid, "orders")
-  );
+    const snap = await getDocs(
 
-  return snap.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+        collection(
+            db,
+            "users",
+            uid,
+            "orders"
+        )
 
-};
-
-/* -----------------------------
-   Clear Cart
------------------------------- */
-
-export const clearCart = async (
-  uid,
-  cartItems
-) => {
-
-  for (const item of cartItems) {
-
-    await deleteDoc(
-      doc(
-        db,
-        "users",
-        uid,
-        "cart",
-        item.id.toString()
-      )
     );
 
-  }
+    return snap.docs.map(doc => ({
+
+        id: doc.id,
+
+        ...doc.data(),
+
+    }));
 
 };
 
-/* -----------------------------
-   Update Order Status
------------------------------- */
+/* =====================================================
+                    CLEAR CART
+===================================================== */
+
+export const clearCart = async (
+    uid,
+    cartItems
+) => {
+
+    for (const item of cartItems) {
+
+        await deleteDoc(
+
+            doc(
+                db,
+                "users",
+                uid,
+                "cart",
+                item.id.toString()
+            )
+
+        );
+
+    }
+
+};
+
+/* =====================================================
+                UPDATE ORDER STATUS
+===================================================== */
 
 export const updateOrderStatus = async (
     uid,
@@ -146,6 +166,7 @@ export const updateOrderStatus = async (
 ) => {
 
     await updateDoc(
+
         doc(
             db,
             "users",
@@ -153,9 +174,13 @@ export const updateOrderStatus = async (
             "orders",
             orderId
         ),
+
         {
-            status
+
+            status,
+
         }
+
     );
 
 };
