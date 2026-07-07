@@ -871,8 +871,8 @@ body:not(.light) .sb-toggle-track {
   }
 
   .sb-logo__icon {
-    width: 28px;
-    height: 28px;
+    width: 38px;
+    height: 38px;
   }
 
   .sb-navbar__right {
@@ -988,14 +988,14 @@ body:not(.light) .sb-toggle-track {
   }
 
   .sb-logo__text {
-    font-size: 0.65rem;
+    font-size: 1rem;
     letter-spacing: -0.5px;
   }
 
   .sb-logo__icon {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
   }
 
   .sb-logo {
