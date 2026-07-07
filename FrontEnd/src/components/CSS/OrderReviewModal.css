@@ -1,0 +1,244 @@
+/* OrderReviewModal.css */
+
+.review-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  animation: reviewFadeIn 0.3s ease;
+}
+
+@keyframes reviewFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.review-modal {
+  background: var(--bg-primary, #1a1a2e);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(255, 165, 0, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+.review-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--text-muted, #888);
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+  padding: 5px;
+}
+
+.review-modal-close:hover {
+  color: var(--text-primary, #fff);
+}
+
+.review-modal h3 {
+  color: var(--text-primary, #fff);
+  font-size: 24px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.review-food-name {
+  color: var(--orange-primary, #ff8c00);
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.review-rating-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.review-stars {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.review-star {
+  background: none;
+  border: none;
+  font-size: 40px;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.review-star.active {
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.review-star:hover {
+  transform: scale(1.1);
+}
+
+.review-rating-label {
+  color: var(--text-muted, #888);
+  font-size: 14px;
+}
+
+.review-text-area {
+  margin-bottom: 24px;
+}
+
+.review-text-area label {
+  display: block;
+  color: var(--text-secondary, #aaa);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.review-text-area textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary, #16213e);
+  color: var(--text-primary, #fff);
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.review-text-area textarea:focus {
+  outline: none;
+  border-color: var(--orange-primary, #ff8c00);
+}
+
+.review-text-area textarea::placeholder {
+  color: var(--text-muted, #666);
+}
+
+.review-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.review-cancel-btn,
+.review-submit-btn {
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.review-cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #aaa);
+}
+
+.review-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.review-submit-btn {
+  background: var(--orange-primary, #ff8c00);
+  color: #fff;
+}
+
+.review-submit-btn:hover:not(:disabled) {
+  background: #e67e00;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
+}
+
+.review-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Order Card Review Badge */
+.order-reviewed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.review-btn {
+  background: rgba(255, 140, 0, 0.15);
+  color: var(--orange-primary, #ff8c00);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.review-btn:hover {
+  background: rgba(255, 140, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.review-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .review-modal {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .review-star {
+    font-size: 32px;
+  }
+
+  .review-actions {
+    flex-direction: column;
+  }
+
+  .review-cancel-btn,
+  .review-submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
