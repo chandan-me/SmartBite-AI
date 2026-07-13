@@ -278,8 +278,8 @@ const Navbar = ({ darkMode, setDarkMode }) => {
               )}
             </div>
           ) : (
-            <Link to="/login" className="sb-login-btn">Login</Link>
-          )}
+            <Link to="/login" className="sb-login-btn" onClick={() => setIsMobileMenuOpen(false)} style={{color:"#ff8c00",fontSize:"15px"}}>Login 🔑</Link>
+          )}  
 
           {/* ---------------- MOBILE HAMBURGER MENU BUTTON ---------------- */}
           <button
