@@ -278,7 +278,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
               )}
             </div>
           ) : (
-            <div className="sb-desktop-login-placeholder"></div>
+            <Link to="/login" className="sb-login-btn">Login</Link>
           )}
 
           {/* ---------------- MOBILE HAMBURGER MENU BUTTON ---------------- */}

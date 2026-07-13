@@ -217,10 +217,24 @@ body:not(.light) .sb-toggle-track {
   box-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
 }
 
-/* ── Desktop Login Button - HIDDEN ── */
+/* ── Desktop Login Button ── */
 .sb-login-btn {
   display: none !important;
 }
+
+@media (min-width: 769px) {
+  .sb-login-btn {
+    display: inline-flex !important;
+    background: var(--bg-card, rgba(255, 255, 255, 0.05));
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    color: var(--text-primary, #fff);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm, 8px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+}
+
 
 .sb-desktop-login-placeholder {
   display: none;
