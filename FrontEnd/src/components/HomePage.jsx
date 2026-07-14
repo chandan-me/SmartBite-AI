@@ -1,6 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react'
+import { useContext, useState, useEffect, Fragment } from 'react'
 import { getRecipes } from "../recipeApi";
-import { Link } from 'react-router-dom'
 import './CSS/Hero.css'
 import ItemsPage from './ItemsPage'
 import { GlobalStateContext } from "../context/GlobalStateContext";
@@ -23,8 +22,6 @@ const getBadge = (name, category) => {
   }
   return 'default'
 }
-
-const getRating = (id) => (3.8 + ((id * 17) % 12) / 10).toFixed(1)
 
 const VoicePanelInline = ({ onOpen }) => (
   <div className='sb-voice-panel'>
@@ -64,7 +61,6 @@ const HomePage = () => {
 const { setTogg, addFavorite, removeFavorite, favorites,} = useContext(GlobalStateContext);
   const [activeAICat, setActiveAICat] = useState('All')
   const [recipes, setRecipes] = useState([]);
-  const [loadingRecipes, setLoadingRecipes] = useState(true);
   
 
   useEffect(() => {
@@ -80,10 +76,6 @@ const { setTogg, addFavorite, removeFavorite, favorites,} = useContext(GlobalSta
     } catch (error) {
 
       console.error(error);
-
-    } finally {
-
-      setLoadingRecipes(false);
 
     }
 
@@ -204,7 +196,6 @@ const getAIRecs = () => {
         <div className='sb-cards-row'>
           {aiRecs.map(item => {
             const badge = getBadge(item.name, item.cuisine)
-            const rating = item.rating
             const favorite = favorites.some(f => f.id === item.id);
             const price = item.price
 
@@ -273,7 +264,7 @@ const getAIRecs = () => {
               { icon: '🎤', title: 'AI Assistant', desc: 'Use voice assistant for quick help' },
               { icon: '🎉', title: 'Enjoy Meal', desc: 'Get your food delivered to your doorstep' },
             ].map((step, i, arr) => (
-              <React.Fragment key={step.title}>
+              <Fragment key={step.title}>
                 <div className='sb-how__step'>
                   <div className='sb-how__icon'>{step.icon}</div>
                   <div className='sb-how__step-text'>
@@ -282,7 +273,7 @@ const getAIRecs = () => {
                   </div>
                 </div>
                 {i < arr.length - 1 && <div className='sb-how__arrow'>→</div>}
-              </React.Fragment>
+              </Fragment>
             ))}
           </div>
         </div>

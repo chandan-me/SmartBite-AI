@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import "../CSS/AddressModal.css";
 import { GlobalStateContext } from "../../context/GlobalStateContext";
 import {
@@ -28,23 +28,21 @@ const AddressModal = ({ onClose, onContinue }) => {
 
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
+    const fetchAddresses = useCallback(async () => {
 
-        if (user) {
-
-            fetchAddresses();
-
-        }
-
-    }, [user]);
-
-    const fetchAddresses = async () => {
+        if (!user) return;
 
         const data = await loadAddresses(user.uid);
 
         setAddresses(data);
 
-    };
+    }, [user]);
+
+    useEffect(() => {
+
+        fetchAddresses();
+
+    }, [fetchAddresses]);
 
     const handleChange = (e) => {
 

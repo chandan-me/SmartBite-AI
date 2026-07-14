@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { GlobalStateContext } from '../context/GlobalStateContext';
 import './CSS/OrderReviewModal.css';
 
 const OrderReviewModal = ({ order, foodItem, onClose, onReviewSubmitted }) => {
-  const { addReview, hasUserReviewedOrder } = useContext(GlobalStateContext);
+  const { addReview } = useContext(GlobalStateContext);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState('');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CSS/Orders.css";
 import { GlobalStateContext } from "../context/GlobalStateContext";
@@ -22,29 +22,7 @@ const OrdersPage = () => {
         "Delivered",
     ];
 
-    useEffect(() => {
-
-        if (!isLoggedIn) {
-
-            navigate("/login");
-
-            return;
-
-        }
-
-        fetchOrders();
-
-        const interval = setInterval(() => {
-
-            fetchOrders();
-
-        }, 3000);
-
-        return () => clearInterval(interval);
-
-    }, [user, isLoggedIn]);
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
 
         if (!user) return;
 
@@ -76,7 +54,29 @@ const OrdersPage = () => {
 
         setLoading(false);
 
-    };
+    }, [user]);
+
+    useEffect(() => {
+
+        if (!isLoggedIn) {
+
+            navigate("/login");
+
+            return;
+
+        }
+
+        fetchOrders();
+
+        const interval = setInterval(() => {
+
+            fetchOrders();
+
+        }, 3000);
+
+        return () => clearInterval(interval);
+
+    }, [isLoggedIn, navigate, fetchOrders]);
 
     const getCurrentStatus = (createdAt) => {
 

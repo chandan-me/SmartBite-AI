@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./CSS/Items.css";
 import "./CSS/RecipeModal.css";
 

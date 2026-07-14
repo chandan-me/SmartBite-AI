@@ -1,18 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect } from "react";
 import "./CSS/RecipeModal.css";
-import { GlobalStateContext } from "../context/GlobalStateContext";
-import { handleAddToCart } from "../utils/handleAddToCart";
-import toast from "react-hot-toast";
 
 const RecipeModal = ({ recipe, closeModal }) => {
-
-    const [qty, setQty] = useState(1);
-
-    const { user, setCart } = useContext(GlobalStateContext);
-
-    if (!recipe) return null;
-
-    const price = recipe.price
 
     useEffect(() => {
 
@@ -36,29 +25,9 @@ const RecipeModal = ({ recipe, closeModal }) => {
 
     }, [closeModal]);
 
-    const onAddCart = async () => {
+    if (!recipe) return null;
 
-        const success = await handleAddToCart({
-
-            user,
-
-            recipe,
-
-            qty,
-
-            setCart,
-
-        });
-
-        if (success) {
-
-            toast.success("✅ Added to Cart");
-
-            closeModal();
-
-        }
-
-    };
+    const price = recipe.price
 
     return (
 

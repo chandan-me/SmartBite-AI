@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './CSS/Cart.css'
 import { GlobalStateContext } from '../context/GlobalStateContext'
@@ -16,7 +16,6 @@ const CartPage = () => {
     const [showPaymentModal, setShowPaymentModal] = useState(false)
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
-    const [orderMessage, setOrderMessage] = useState('')
     const navigate = useNavigate()
 
     useEffect(() => {

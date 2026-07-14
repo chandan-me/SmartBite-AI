@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import "./CSS/Profile.css";
 import { GlobalStateContext } from "../context/GlobalStateContext";
 import { loadProfile, updateUserName } from "../services/profileService";
@@ -21,10 +21,25 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [memberSince, setMemberSince] = useState('N/A');
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!user) return;
-    fetchData();
+    setLoading(true);
+    try {
+      const p = await loadProfile(user.uid);
+      const o = await loadOrders(user.uid);
+      setProfile(p);
+      setOrders(o);
+      setName(p?.name || user.displayName || user.email?.split('@')[0] || 'User');
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Get member since date from multiple sources
   useEffect(() => {
@@ -91,20 +106,6 @@ const ProfilePage = () => {
     }
   }, [user]);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const p = await loadProfile(user.uid);
-      const o = await loadOrders(user.uid);
-      setProfile(p);
-      setOrders(o);
-      setName(p?.name || user.displayName || user.email?.split('@')[0] || 'User');
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const saveName = async () => {
     try {

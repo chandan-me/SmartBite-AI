@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import { useState, useContext } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import "./CSS/Login.css"
 import { GlobalStateContext } from '../context/GlobalStateContext'

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { GlobalStateContext } from "../context/GlobalStateContext";
 import { handleAddToCart } from "../utils/handleAddToCart";
 import RecipeModal from "./RecipeModal";

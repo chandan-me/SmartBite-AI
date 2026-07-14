@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
+import { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GlobalStateContext } from '../context/GlobalStateContext';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
@@ -173,7 +173,6 @@ const VoiceAssistant = () => {
   const [loginStep,            setLoginStep]            = useState(null);
   const [loginEmail,           setLoginEmail]           = useState('');
   const [checkoutStep,         setCheckoutStep]         = useState(CHECKOUT_STEPS.NONE);
-  const [pendingPaymentMethod, setPendingPaymentMethod] = useState(null);
 
   const processedRef = useRef(new Set());
   const timeoutRef   = useRef(null);
@@ -377,14 +376,12 @@ const VoiceAssistant = () => {
 
     if (intent.type === 'SELECT_COD') {
       speak('Cash on delivery selected. Say confirm to place your order, or cancel to go back.');
-      setPendingPaymentMethod('cod');
       setCheckoutStep(CHECKOUT_STEPS.CONFIRM_COD);
       return;
     }
 
     if (intent.type === 'SELECT_UPI') {
       speak('UPI selected. Say confirm to proceed to payment, or cancel to go back.');
-      setPendingPaymentMethod('upi');
       setCheckoutStep(CHECKOUT_STEPS.CONFIRM_UPI);
       return;
     }
@@ -487,6 +484,13 @@ const VoiceAssistant = () => {
     handleIntent, applyFilter, findFood, updateQuantity, logout, navigate, speak,
   ]);
 
+  const stopListening = useCallback(() => {
+    setIsListening(false);
+    SpeechRecognition.stopListening();
+    clearTimeout(timeoutRef.current);
+    if (transcript && !processedRef.current.has(transcript)) processText(transcript);
+  }, [transcript, processText]);
+
   /* ── transcript watcher ── */
   useEffect(() => {
     if (!transcript || !isListening) return;
@@ -500,7 +504,7 @@ const VoiceAssistant = () => {
       const timer = setTimeout(stopListening, 1000);
       return () => clearTimeout(timer);
     }
-  }, [listening, transcript, isListening]);
+  }, [listening, transcript, isListening, stopListening]);
 
   const startListening = () => {
     window.speechSynthesis?.cancel();
@@ -509,13 +513,6 @@ const VoiceAssistant = () => {
     processedRef.current.clear();
     resetTranscript();
     SpeechRecognition.startListening({ continuous: true, language: 'en-IN' });
-  };
-
-  const stopListening = () => {
-    setIsListening(false);
-    SpeechRecognition.stopListening();
-    clearTimeout(timeoutRef.current);
-    if (transcript && !processedRef.current.has(transcript)) processText(transcript);
   };
 
   const closeAssistant = () => {
@@ -600,7 +597,7 @@ const VoiceAssistant = () => {
       {transcript && (
         <div className="voice-transcript">
           <div className="transcript-label">You said</div>
-          <div className="transcript-text">"{transcript}"</div>
+          <div className="transcript-text">&ldquo;{transcript}&rdquo;</div>
         </div>
       )}
 
