@@ -213,17 +213,19 @@ const VoiceAssistant = () => {
     setTimeout(() => {
       document.getElementById('items')?.scrollIntoView({ behavior: 'smooth' });
       setTimeout(() => {
-        const btns = document.querySelectorAll('.category-btn');
+        const btns = document.querySelectorAll('button');
         // exact category name match
         for (const btn of btns) {
-          if (btn.textContent.toLowerCase().includes(category.toLowerCase())) {
+          const btnText = btn.textContent.toLowerCase().trim();
+          if (btnText.includes(category.toLowerCase())) {
             btn.click(); return;
           }
         }
         // keyword match
         const kws = CATEGORY_KEYWORDS[category] || [];
         for (const btn of btns) {
-          if (kws.some(kw => btn.textContent.toLowerCase().includes(kw))) {
+          const btnText = btn.textContent.toLowerCase();
+          if (kws.some(kw => btnText.includes(kw))) {
             btn.click(); return;
           }
         }
