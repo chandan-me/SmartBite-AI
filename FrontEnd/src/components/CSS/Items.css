@@ -349,6 +349,20 @@
 
 @media (max-width: 768px){
 
+.sb-cat-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+}
+.sb-cat-nav::-webkit-scrollbar {
+    height: 4px;
+}
+.sb-cat-nav::-webkit-scrollbar-thumb {
+    background: var(--border-subtle);
+    border-radius: 4px;
+}
+
 .card-add-cart{
 
     display:flex;

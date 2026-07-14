@@ -30,7 +30,7 @@ const AboutPage = () => {
         <p>SmartBite AI was built to revolutionize food ordering — combining voice AI, smart recommendations, and fast delivery into one seamless experience. Starting as EchoEats, we've grown into a full-stack AI-powered platform that connects food lovers with the best meals in town.</p>
       </div>
 
-      <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'1rem', textAlign:'center'}}>
+      <div className="about-stats-grid">
         {[['500+','Restaurant Partners'],['50k+','Happy Customers'],['20min','Avg Delivery'],['4.8★','Rating']].map(([num,label]) => (
           <div key={label} style={{background:'var(--bg-card)', border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-lg)', padding:'1.5rem'}}>
             <div style={{fontFamily:'var(--font-display)', fontSize:'1.8rem', fontWeight:800, color:'var(--orange-primary)'}}>{num}</div>

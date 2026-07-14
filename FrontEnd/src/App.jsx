@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { GlobalStateProvider } from './context/GlobalStateContext'
 import Navbar from './components/Navbar'
 import VoiceAssistant from './components/VoiceAssistant'
@@ -7,9 +7,15 @@ import Footer from './components/Footer'
 import { Toaster } from "react-hot-toast"
 
 const App = () => {
+  const { pathname } = useLocation();
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("theme") !== "light"
   );
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   useEffect(() => {
     if (darkMode) {
       document.body.classList.remove("light");
