@@ -2,6 +2,10 @@ import { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GlobalStateContext } from '../context/GlobalStateContext';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { getRecipes } from '../recipeApi';
+import { addCartItem, loadCart, removeCartItem } from '../services/cartService';
+import { placeOrder } from '../services/orderService';
+import { loadAddresses } from '../services/addressService';
 import './CSS/Voice.css';
 
 /* ─── TTS — native only, Google TTS blocked by CORS ─── */
@@ -161,10 +165,12 @@ const VoiceAssistant = () => {
   const location = useLocation();
   const {
     Togg, setTogg,
-    updateQuantity, logout, login,
-    foodData, isLoggedIn, user,
+    logout, login,
+    isLoggedIn, user,
+    cart, setCart,
   } = useContext(GlobalStateContext);
 
+  const [recipes, setRecipes] = useState([]);
   const [isListening,          setIsListening]          = useState(false);
   const [assistantResponse,    setAssistantResponse]    = useState('');
   const [isSpeaking,           setIsSpeaking]           = useState(false);
@@ -178,6 +184,11 @@ const VoiceAssistant = () => {
   const timeoutRef   = useRef(null);
 
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
+
+  // Load recipes for food matching
+  useEffect(() => {
+    getRecipes().then(setRecipes).catch(console.error);
+  }, []);
 
   /* ── greeting on mount ── */
   useEffect(() => {
@@ -225,27 +236,50 @@ const VoiceAssistant = () => {
 
   /* ── this CART helpers ── */
   
-  const getCartItems = useCallback(() =>
-    (foodData || []).filter(f => (f.Quantity || 0) > 0), [foodData]);
+  const getCartItems = useCallback(() => cart, [cart]);
 
   const getCartTotal = useCallback(() =>
-    getCartItems().reduce((s, i) => s + parseFloat(i.Price || 0) * (i.Quantity || 0), 0),
-  [getCartItems]);
+    cart.reduce((s, i) => s + (i.price || 0) * (i.quantity || 0), 0),
+  [cart]);
 
   const findFood = useCallback((name) =>
-    (foodData || []).find(f =>
-      f.FoodName.toLowerCase().includes(name.toLowerCase()) ||
-      name.toLowerCase().includes(f.FoodName.toLowerCase())
+    (recipes || []).find(r =>
+      r.name.toLowerCase().includes(name.toLowerCase()) ||
+      name.toLowerCase().includes(r.name.toLowerCase())
     ),
-  [foodData]);
+  [recipes]);
 
   const fireCartEvent = (eventName, detail = {}) =>
     window.dispatchEvent(new CustomEvent(eventName, { detail }));
 
   const clearCart = useCallback(async () => {
-    for (const item of getCartItems())
-      await updateQuantity(item.FoodID, -item.Quantity);
-  }, [getCartItems, updateQuantity]);
+    if (!user) return;
+    for (const item of cart) {
+      await removeCartItem(user.uid, item.id);
+    }
+    setCart([]);
+  }, [cart, user, setCart]);
+
+  const updateQuantity = useCallback(async (recipeId, change) => {
+    if (!user) return;
+    const food = recipes.find(r => r.id === recipeId);
+    if (!food) return;
+
+    const existing = cart.find(item => item.id === recipeId);
+    const currentQty = existing ? existing.quantity : 0;
+    const newQty = currentQty + change;
+
+    if (newQty <= 0) {
+      if (existing) {
+        await removeCartItem(user.uid, recipeId);
+      }
+    } else {
+      await addCartItem(user.uid, food, newQty);
+    }
+
+    const updated = await loadCart(user.uid);
+    setCart(updated);
+  }, [user, recipes, cart, setCart]);
 
   /* ── COD order ── */
   const placeCODOrder = useCallback(async () => {
@@ -257,23 +291,35 @@ const VoiceAssistant = () => {
     setCheckoutStep(CHECKOUT_STEPS.PROCESSING);
     speak('Placing your cash on delivery order. Please wait.');
     try {
-      const res = await fetch('http://localhost:8000/create-order/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.user_id, amount: total, items: cartItems, paymentMethod: 'COD' }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        await clearCart();
-        speak('Order placed with cash on delivery! Enjoy your meal!');
-        setCheckoutStep(CHECKOUT_STEPS.NONE);
-        navigate('/orders');
-      } else {
-        speak('Order failed. Please try again.');
-        setCheckoutStep(CHECKOUT_STEPS.NONE);
-      }
-    } catch {
-      speak('Could not connect to server. Please try again.');
+      const addresses = await loadAddresses(user.uid);
+      const address = addresses.length > 0 ? addresses[0] : {
+        fullName: user.displayName || user.email?.split('@')[0] || "Guest User",
+        phone: user.phoneNumber || "9999999999",
+        house: "Voice Order",
+        area: "Default Area",
+        city: "Default City",
+        state: "Default State",
+        pincode: "110001",
+        landmark: "Voice Assistant Placement"
+      };
+
+      await placeOrder(
+        user.uid,
+        cartItems,
+        total,
+        "Cash On Delivery",
+        address,
+        "Pending",
+        ""
+      );
+
+      await clearCart();
+      speak('Order placed with cash on delivery! Enjoy your meal!');
+      setCheckoutStep(CHECKOUT_STEPS.NONE);
+      navigate('/orders');
+    } catch (err) {
+      console.error(err);
+      speak('Order failed. Please try again.');
       setCheckoutStep(CHECKOUT_STEPS.NONE);
     }
   }, [getCartItems, getCartTotal, isLoggedIn, user, clearCart, speak, navigate]);
@@ -288,7 +334,7 @@ const VoiceAssistant = () => {
     setCheckoutStep(CHECKOUT_STEPS.PROCESSING);
     speak('Opening UPI payment. Please complete the payment on screen.');
     if (location.pathname !== '/cart') navigate('/cart');
-    setTimeout(() => fireCartEvent('voice:open-upi', { userId: user.user_id, total, cartItems }), 400);
+    setTimeout(() => fireCartEvent('voice:open-upi', { userId: user.uid, total, cartItems }), 400);
     setCheckoutStep(CHECKOUT_STEPS.NONE);
   }, [getCartItems, getCartTotal, isLoggedIn, user, speak, navigate, location]);
 
@@ -326,8 +372,8 @@ const VoiceAssistant = () => {
         speak(`Sorry, I could not find ${intent.itemName} in the menu.`);
         return;
       }
-      for (let i = 0; i < intent.quantity; i++) await updateQuantity(food.FoodID, 1);
-      speak(`Added ${intent.quantity} ${food.FoodName} to your cart!`);
+      for (let i = 0; i < intent.quantity; i++) await updateQuantity(food.id, 1);
+      speak(`Added ${intent.quantity} ${food.name} to your cart!`);
       return;
     }
 
@@ -338,14 +384,14 @@ const VoiceAssistant = () => {
         speak(`Sorry, I could not find ${intent.itemName} in your cart.`);
         return;
       }
-      const cartItem = getCartItems().find(f => f.FoodID === food.FoodID);
-      if (!cartItem || cartItem.Quantity === 0) {
-        speak(`${food.FoodName} is not in your cart.`);
+      const cartItem = getCartItems().find(f => f.id === food.id);
+      if (!cartItem || cartItem.quantity === 0) {
+        speak(`${food.name} is not in your cart.`);
         return;
       }
-      const qty = Math.min(intent.quantity, cartItem.Quantity);
-      for (let i = 0; i < qty; i++) await updateQuantity(food.FoodID, -1);
-      speak(`Removed ${qty} ${food.FoodName} from your cart.`);
+      const qty = Math.min(intent.quantity, cartItem.quantity);
+      for (let i = 0; i < qty; i++) await updateQuantity(food.id, -1);
+      speak(`Removed ${qty} ${food.name} from your cart.`);
       return;
     }
 
@@ -368,7 +414,7 @@ const VoiceAssistant = () => {
         return;
       }
       const total = getCartTotal();
-      const names = cart.map(i => `${i.Quantity} ${i.FoodName}`).join(', ');
+      const names = cart.map(i => `${i.quantity} ${i.name}`).join(', ');
       speak(`You have ${names} in your cart. Total is ₹${total.toFixed(0)}. How would you like to pay? Say cash on delivery or UPI.`);
       setCheckoutStep(CHECKOUT_STEPS.AWAITING_PAYMENT_METHOD);
       return;
@@ -458,13 +504,13 @@ const VoiceAssistant = () => {
         if (cmd.command === 'ORDER' && cmd.items?.length) {
           for (const item of cmd.items) {
             const food = findFood(item.name);
-            if (food) for (let i = 0; i < item.quantity; i++) await updateQuantity(food.FoodID, 1);
+            if (food) for (let i = 0; i < item.quantity; i++) await updateQuantity(food.id, 1);
           }
         }
         if (cmd.command === 'REMOVE' && cmd.items?.length) {
           for (const item of cmd.items) {
             const food = findFood(item.name);
-            if (food) for (let i = 0; i < item.quantity; i++) await updateQuantity(food.FoodID, -1);
+            if (food) for (let i = 0; i < item.quantity; i++) await updateQuantity(food.id, -1);
           }
         }
         if (cmd.command === 'NAVIGATE' && cmd.page === 'login') {

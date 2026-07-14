@@ -4,6 +4,7 @@ import './CSS/Cart.css'
 import { GlobalStateContext } from '../context/GlobalStateContext'
 import {loadCart,removeCartItem,updateCartQty,} from "../services/cartService";
 import {placeOrder, clearCart,} from "../services/orderService";
+import { loadAddresses } from "../services/addressService";
 import toast from "react-hot-toast";
 import AddressModal from "./cart/AddressModal";
 import { openRazorpay } from "../services/paymentService";
@@ -43,6 +44,56 @@ const CartPage = () => {
     }, [user]);
 
     // ── Voice assistant event: open UPI payment ──
+    useEffect(() => {
+        const handleVoiceUPI = async () => {
+            if (!user) return;
+            try {
+                setLoading(true);
+                const addresses = await loadAddresses(user.uid);
+                const address = addresses.length > 0 ? addresses[0] : {
+                    fullName: user.displayName || user.email?.split('@')[0] || "Guest",
+                    phone: user.phoneNumber || "9999999999",
+                    house: "Voice Order",
+                    area: "Default Area",
+                    city: "Default City",
+                    state: "Default State",
+                    pincode: "110001",
+                    landmark: "Voice Assistant Placement"
+                };
+                setSelectedAddress(address);
+
+                openRazorpay({
+                    amount: total,
+                    user,
+                    onSuccess: async (payment) => {
+                        await placeOrder(
+                            user.uid,
+                            cartItems,
+                            total,
+                            "Razorpay",
+                            address,
+                            "Paid",
+                            payment.razorpay_payment_id
+                        );
+                        await clearCart(user.uid, cartItems);
+                        toast.success("Payment Successful 🎉");
+                        navigate("/orders");
+                    },
+                    onFailure: () => {
+                        toast.error("Payment Cancelled");
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                toast.error("Voice payment failed");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        window.addEventListener('voice:open-upi', handleVoiceUPI);
+        return () => window.removeEventListener('voice:open-upi', handleVoiceUPI);
+    }, [user, total, cartItems, navigate]);
 
 
 
