@@ -200,11 +200,8 @@ const VoiceAssistant = () => {
   /* ── greeting on opening ── */
   useEffect(() => {
     if (Togg && !hasGreeted) {
-      const timer = setTimeout(() => {
-        speak('Hello! I am SmartBite AI. Say "show burgers", "add 2 pizzas", "checkout", or "take me to cart"!');
-        setHasGreeted(true);
-      }, 800);
-      return () => clearTimeout(timer);
+      speak('Hello! I am SmartBite AI. Say "show burgers", "add 2 pizzas", "checkout", or "take me to cart"!');
+      setHasGreeted(true);
     }
   }, [Togg, hasGreeted, speak]);
 
