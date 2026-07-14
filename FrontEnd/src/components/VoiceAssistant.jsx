@@ -659,7 +659,12 @@ const VoiceAssistant = () => {
       {checkoutStep === CHECKOUT_STEPS.NONE && (
         <div style={{ padding: '0 1.25rem 0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
           {[
-            
+            { label: '🍔 Burgers', key: 'burger' },
+            { label: '🍕 Pizzas', key: 'pizza' },
+            { label: '🥦 Veg', key: 'veg' },
+            { label: '🥗 Healthy', key: 'healthy' },
+            { label: '🌶️ Spicy', key: 'spicy' },
+            { label: '🍰 Desserts', key: 'dessert' }
           ].map(({ label, key }) => (
             <button key={key} className="voice-chip" onClick={() => processText(`show ${key}`)}>
               {label}
