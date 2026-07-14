@@ -190,16 +190,16 @@ const VoiceAssistant = () => {
     getRecipes().then(setRecipes).catch(console.error);
   }, []);
 
-  /* ── greeting on mount ── */
+  /* ── greeting on opening ── */
   useEffect(() => {
-    if (!hasGreeted) {
-      setTimeout(() => {
+    if (Togg && !hasGreeted) {
+      const timer = setTimeout(() => {
         speak('Hello! I am SmartBite AI. Say "show burgers", "add 2 pizzas", "checkout", or "take me to cart"!');
         setHasGreeted(true);
-      }, 1000);
+      }, 800);
+      return () => clearTimeout(timer);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [Togg, hasGreeted, speak]);
 
   /* ── speak ── */
   const speak = useCallback((text) => {
@@ -569,6 +569,7 @@ const VoiceAssistant = () => {
     setLoginStep(null);
     setLoginEmail('');
     setCheckoutStep(CHECKOUT_STEPS.NONE);
+    setHasGreeted(false);
     processedRef.current.clear();
     resetTranscript();
   };
