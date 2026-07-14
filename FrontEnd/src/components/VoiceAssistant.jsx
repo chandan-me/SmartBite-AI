@@ -646,10 +646,7 @@ const VoiceAssistant = () => {
             { label: '🥦 Veg', key: 'veg' },
             { label: '🥗 Healthy', key: 'healthy' },
             { label: '🌶️ Spicy', key: 'spicy' },
-            { label: '🍰 Sweet', key: 'sweet' },
-            { label: '🍔 Fast Food', key: 'fastfood' },
-            { label: '🍳 Breakfast', key: 'breakfast' },
-            { label: '🍖 Non-Veg', key: 'nonveg' },
+      
           ].map(({ label, key }) => (
             <button key={key} className="voice-chip" onClick={() => processText(`show ${key}`)}>
               {label}
