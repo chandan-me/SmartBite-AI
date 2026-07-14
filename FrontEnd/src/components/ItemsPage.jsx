@@ -109,8 +109,8 @@ const ItemsPage = () => {
             } else {
                 setSelectedCategory("All");
                 const keywordMap = {
-                    veg: "vegetable",
-                    vegetarian: "vegetable",
+                    veg: "veg",
+                    vegetarian: "veg",
                     dessert: "cake",
                     sweet: "cake",
                     spicy: "chilli",
