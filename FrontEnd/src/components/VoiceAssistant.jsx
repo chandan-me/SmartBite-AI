@@ -212,25 +212,8 @@ const VoiceAssistant = () => {
     navigate('/');
     setTimeout(() => {
       document.getElementById('items')?.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => {
-        const btns = document.querySelectorAll('button');
-        // exact category name match
-        for (const btn of btns) {
-          const btnText = btn.textContent.toLowerCase().trim();
-          if (btnText.includes(category.toLowerCase())) {
-            btn.click(); return;
-          }
-        }
-        // keyword match
-        const kws = CATEGORY_KEYWORDS[category] || [];
-        for (const btn of btns) {
-          const btnText = btn.textContent.toLowerCase();
-          if (kws.some(kw => btnText.includes(kw))) {
-            btn.click(); return;
-          }
-        }
-      }, 400);
-    }, 300);
+      fireCartEvent('voice:filter', { category });
+    }, 400);
   }, [navigate, speak]);
 
   /* ── this CART helpers ── */

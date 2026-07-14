@@ -5,8 +5,8 @@ import ItemsPage from './ItemsPage'
 import { GlobalStateContext } from "../context/GlobalStateContext";
 
 const AI_CATEGORIES = [
-  {label:'Non-Veg', emoji:'🍖', badge:'nonveg', keywords:['chicken','mutton','beef','pork','fish','seafood']},
-  {label:'Veg', emoji:'🥦', badge:'vegan', keywords:['vegan','plant-based','tofu','tempeh','seitan','legumes','beans','lentils']},
+  {label:'Non-Veg', emoji:'🍖', badge:'nonveg', keywords:['chicken','mutton','beef','pork','fish','seafood','shrimp','prawn','salmon','meat','bacon','turkey','pepperoni']},
+  {label:'Veg', emoji:'🥦', badge:'vegan', keywords:['veg','vegetarian','vegetable','vegan','plant-based','tofu','paneer','margherita','cheese','beans','lentils','spinach','quinoa','salad']},
   { label: 'Healthy', emoji: '🥗', badge: 'healthy', keywords: ['salad','healthy','veggie','oats','fruit',"vegetable","quinoa","avocado","grilled","protein","low calorie","oats","smoothie"] },
   { label: 'Spicy', emoji: '🌶️', badge: 'spicy', keywords: ['spicy','pepper','chilli','peri','masala', "chili","masala","schezwan","tandoori","curry","jalapeno","hot","buffalo"] },
   { label: 'Sweet', emoji: '🍰', badge: 'sweet', keywords: [ "cake","dessert","sweet","cookie","brownie","ice cream","lava","halwa","chocolate","donut","cupcake","pie"] },
@@ -61,6 +61,30 @@ const HomePage = () => {
 const { setTogg, addFavorite, removeFavorite, favorites,} = useContext(GlobalStateContext);
   const [activeAICat, setActiveAICat] = useState('All')
   const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    const handleVoiceFilter = (e) => {
+      const cat = e.detail.category;
+      const mapping = {
+        veg: 'Veg',
+        nonveg: 'Non-Veg',
+        spicy: 'Spicy',
+        healthy: 'Healthy',
+        dessert: 'Sweet',
+        sweet: 'Sweet',
+        fastfood: 'Fast Food',
+        breakfast: 'Breakfast'
+      };
+      const mapped = mapping[cat.toLowerCase()];
+      if (mapped) {
+        setActiveAICat(mapped);
+      } else {
+        setActiveAICat('All');
+      }
+    };
+    window.addEventListener('voice:filter', handleVoiceFilter);
+    return () => window.removeEventListener('voice:filter', handleVoiceFilter);
+  }, []);
   
 
   useEffect(() => {

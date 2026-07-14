@@ -66,18 +66,66 @@ const ItemsPage = () => {
         }
 
         if (search !== "") {
-
-            temp = temp.filter((item) =>
-                item.name
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-            );
-
+            const query = search.toLowerCase();
+            if (query === 'veg' || query === 'vegetarian') {
+                const vegKeywords = ['veg', 'vegetarian', 'vegetable', 'vegan', 'plant-based', 'paneer', 'tofu', 'margherita', 'cheese', 'beans', 'lentils', 'spinach', 'quinoa', 'salad'];
+                const nonVegKeywords = ['chicken', 'mutton', 'beef', 'pork', 'fish', 'seafood', 'shrimp', 'prawn', 'salmon', 'meat', 'bacon', 'turkey', 'pepperoni'];
+                temp = temp.filter((item) => {
+                    const nameLower = item.name.toLowerCase();
+                    const hasNonVeg = nonVegKeywords.some(kw => nameLower.includes(kw));
+                    if (hasNonVeg) return false;
+                    return vegKeywords.some(kw => nameLower.includes(kw)) ||
+                           (!nameLower.includes('chicken') && !nameLower.includes('beef') && !nameLower.includes('shrimp'));
+                });
+            } else if (query === 'dessert' || query === 'sweet') {
+                const sweetKeywords = ['cake', 'dessert', 'sweet', 'cookie', 'brownie', 'ice cream', 'lava', 'halwa', 'chocolate', 'donut', 'cupcake', 'pie', 'pudding'];
+                temp = temp.filter((item) =>
+                    sweetKeywords.some(kw => item.name.toLowerCase().includes(kw))
+                );
+            } else {
+                temp = temp.filter((item) =>
+                    item.name
+                        .toLowerCase()
+                        .includes(search.toLowerCase())
+                );
+            }
         }
 
         setFilteredRecipes(temp);
 
     }, [recipes, search, selectedCategory]);
+
+    useEffect(() => {
+        const handleVoiceFilter = (e) => {
+            const cat = e.detail.category.toLowerCase();
+            
+            const matchedCuisine = (categories || []).find(
+                c => c.toLowerCase() === cat
+            );
+            
+            if (matchedCuisine) {
+                setSelectedCategory(matchedCuisine);
+                setSearch("");
+            } else {
+                setSelectedCategory("All");
+                const keywordMap = {
+                    veg: "vegetable",
+                    vegetarian: "vegetable",
+                    dessert: "cake",
+                    sweet: "cake",
+                    spicy: "chilli",
+                    burger: "burger",
+                    pizza: "pizza",
+                    salad: "salad",
+                    drinks: "juice"
+                };
+                setSearch(keywordMap[cat] || cat);
+            }
+        };
+
+        window.addEventListener('voice:filter', handleVoiceFilter);
+        return () => window.removeEventListener('voice:filter', handleVoiceFilter);
+    }, [categories]);
 
     const catEmoji = (cat) => {
 
