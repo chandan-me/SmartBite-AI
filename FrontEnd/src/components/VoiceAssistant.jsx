@@ -185,6 +185,13 @@ const VoiceAssistant = () => {
 
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
+  /* ── speak ── */
+  const speak = useCallback((text) => {
+    setAssistantResponse(text);
+    setIsSpeaking(true);
+    speakNative(text, () => setIsSpeaking(false));
+  }, []);
+
   // Load recipes for food matching
   useEffect(() => {
     getRecipes().then(setRecipes).catch(console.error);
@@ -200,13 +207,6 @@ const VoiceAssistant = () => {
       return () => clearTimeout(timer);
     }
   }, [Togg, hasGreeted, speak]);
-
-  /* ── speak ── */
-  const speak = useCallback((text) => {
-    setAssistantResponse(text);
-    setIsSpeaking(true);
-    speakNative(text, () => setIsSpeaking(false));
-  }, []);
 
   /* ── FILTER ── */
   const applyFilter = useCallback((category) => {
