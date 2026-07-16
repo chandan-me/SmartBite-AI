@@ -335,6 +335,26 @@ flex-direction:column;
 
 }
 
+@media(max-width:600px){
+  .recipe-overlay{
+    padding: 10px;
+  }
+  .recipe-info {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .nutrition-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .recipe-right {
+    padding: 15px;
+  }
+  .recipe-right h1 {
+    font-size: 22px;
+  }
+}
+
 .qty-wrapper{
 
 display:flex;

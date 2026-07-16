@@ -646,7 +646,7 @@ const VoiceAssistant = () => {
             { label: '🥦 Veg', key: 'veg' },
             { label: '🥗 Healthy', key: 'healthy' },
             { label: '🌶️ Spicy', key: 'spicy' },
-      
+
           ].map(({ label, key }) => (
             <button key={key} className="voice-chip" onClick={() => processText(`show ${key}`)}>
               {label}

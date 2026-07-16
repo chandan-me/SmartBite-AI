@@ -524,6 +524,38 @@
   .sb-how__arrow { display: none; }
 }
 
+@media (max-width: 600px) {
+  .sb-hero__main {
+    min-height: 380px;
+    align-items: center;
+  }
+  .sb-hero__food-img {
+    opacity: 0.25;
+    width: 75%;
+  }
+  .sb-hero__content {
+    padding: 1.25rem;
+    max-width: 100%;
+  }
+  .sb-hero__title {
+    font-size: 1.85rem;
+  }
+  .sb-hero__subtitle {
+    font-size: 0.85rem;
+    max-width: 100%;
+    color: var(--text-primary);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  }
+  .sb-hero__promo {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .sb-promo__pct {
+    font-size: 1.3rem;
+  }
+}
+
 /* Search Container */
 .sb-search-container{
     display:flex;
